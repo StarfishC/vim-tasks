@@ -26,6 +26,13 @@
 " ${pathSeparator} - the character used by the operating system to separate components in file paths
 
 
+if has("win32") || has("win64")
+    let s:is_windows = 1
+else
+    let s:is_windows = 0
+endif
+
+
 function! s:expand_macros() abort
 	let macros = {}
     if s:is_windows == 1
@@ -51,3 +58,14 @@ function! s:expand_macros() abort
 endfunc
 
 
+function! tasksystem#predefinedvars#process_macros(opts) abort
+    let macros = s:expand_macros()
+    let params = a:opts
+    for key in keys(params)
+        let substr = matchstr(params[key], '\${[a-zA-Z]\{-}}')
+        let keystr = matchstr(substr, '\[a-zA-Z]+')
+        echo substr
+        echo keystr
+    endfor
+    return
+endfunction

@@ -1,6 +1,15 @@
+" vim:sw=4
+" ============================================================================
+" File:           json.vim
+" Author:         caoshenghui <576365750@qq.com>
+" Github:         https://github.com/caoshenghui
+" Description:
+" LICENSE:        MIT
+" ============================================================================
+
+
 " local variables
-" >>>>>>>>>>>>>>>
-let s:default_local_path = tasksystem#predefinedvars#get_root()
+let s:default_local_path = tasksystem#path#get_root()
 let s:default_global_path = get(g:, "tasksystem_global_path", ".")
 let s:json_name = get(g:, "tasksystem_tasks_name", "")
 let s:is_nvim = has("nvim")
@@ -9,7 +18,7 @@ let s:tasksinfo = {}
 
 
 " read json file
-function! s:tasksystem_json_decode(filename)
+function! s:json_decode(filename) abort
     let l:filename = expand(a:filename)
     if filereadable(l:filename) == 0
         return {}
@@ -59,15 +68,14 @@ function! s:tasksystem_json_decode(filename)
     endif
 endfunction
 
-
 " extract json file configs
-function! tasksystem#json#getconfig()
+function! s:json_getconfig() abort
     let l:filelist = [s:default_global_path . '/' . s:json_name,
                      \s:default_local_path . '/' . s:json_name]
     let s:namecompleteopts = []
     let s:tasksinfo = {}
     for filepath in filelist
-        let l:jsoncontents = s:tasksystem_json_decode(filepath)
+        let l:jsoncontents = s:json_decode(filepath)
         if l:jsoncontents != {}
             for tmp in l:jsoncontents.tasks
                 if get(tmp, 'label', 'error') == 'error'
@@ -89,23 +97,14 @@ function! tasksystem#json#getconfig()
     return 1
 endfunction
 
-function! tasksystem#json#namelist()
-    " if s:namecompleteopts == []
-    "     call tasksystem#json#getconfig()
-    " endif
-    call tasksystem#json#getconfig()
+
+function! tasksystem#json#namelist() abort
+    call s:json_getconfig()
     return s:namecompleteopts
 endfunction
 
-function! tasksystem#json#taskinfo()
-    " if s:tasksinfo == {}
-    "     call tasksystem#json#getconfig()
-    " endif
-    call tasksystem#json#getconfig()
+function! tasksystem#json#taskinfo() abort
+    call s:json_getconfig()
     return s:tasksinfo
 endfunction
-
-" echo tasksystem#json#getconfig()
-" echo s:namecompleteopts
-" echo tasksystem#json#taskinfo()
 

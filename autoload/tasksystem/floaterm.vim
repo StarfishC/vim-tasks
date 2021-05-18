@@ -1,5 +1,14 @@
+" vim:sw=4
+" ============================================================================
+" File:           floaterm.vim
+" Author:         caoshenghui <576365750@qq.com>
+" Github:         https://github.com/caoshenghui
+" Description:
+" LICENSE:        MIT
+" ============================================================================
 
-function! s:floaterm_params(opts)
+
+function! s:floaterm_params(opts) abort
     let params = {}
     if get(a:opts, 'cwd', '') == ''
         let params.cwd = fnameescape(getcwd())
@@ -39,9 +48,8 @@ function! s:floaterm_params(opts)
     return params
 endfunction
 
-
-function! s:floaterm_run(opts)
-    if get(a:opts, 'bang', '!') == '!'
+function! s:floaterm_run(bang, opts) abort
+    if a:bang
         let cmd = 'FloatermNew!'
     else
         let cmd = 'FloatermNew'
@@ -63,7 +71,6 @@ function! s:floaterm_run(opts)
     endif
 endfunction
 
-
 function! s:floaterm_close() abort
     if &ft == 'floaterm' | return | endif
     for b in tabpagebuflist()
@@ -74,16 +81,11 @@ function! s:floaterm_close() abort
     endfor
 endfunction
 
-
-function! s:floaterm_run_reuse(opts)
+function! s:floaterm_run_reuse(bang, opts) abort
     let params = s:floaterm_params(a:opts)
     let curr_bufnr = floaterm#buflist#curr()
     if curr_bufnr == -1
-        let bang = v:true
-        if get(a:opts, 'bang', '!') != '!'
-            let bang = '!'
-        endif
-        let curr_bufnr = floaterm#new(bang, 'ls', {}, params)
+        let curr_bufnr = floaterm#new(a:bang, 'ls', {}, params)
     else
         call floaterm#terminal#open_existing(curr_bufnr)
     endif
@@ -101,33 +103,14 @@ function! s:floaterm_run_reuse(opts)
 endfunction
 
 
-function! tasksystem#floaterm#run(opts)
+function! tasksystem#floaterm#run(bang, opts) abort
     if exists(':FloatermNew') != 2
         return tasksystem#utils#errmsg("require voldikss/vim-floatem")
     endif
     if get(a:opts, 'reuse', 0) == 1
-        call s:floaterm_run_reuse(a:opts)
+        call s:floaterm_run_reuse(a:bang, a:opts)
     else
-        call s:floaterm_run(a:opts)
+        call s:floaterm_run(a:bang, a:opts)
     endif
 endfunction
 
-
-" ==================== TEST ========================
-let dic = {}
-let dic.position = 'bottom'
-let dic.type = 'floaterm'
-let dic.autoclose = 0
-let dic.bang = '!'
-let dic.focus = 0
-let dic.cmd = 'ls -la'
-" echo s:floaterm_run(dic)
-" echo tasksystem#floaterm#run(dic)
-
-" call s:floaterm_run_reuse(dic)
-
-let cmd = "ls"
-let jobopts = {}
-let params = {'cwd': '~/.vim' , 'wintype' : 'float', 'position': 'center', 'silent': 0, 'autoclose':0}
-let bang = '!'
-" call floaterm#new(1, cmd, jobopts, params)

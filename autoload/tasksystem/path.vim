@@ -8,7 +8,7 @@
 " ============================================================================
 
 
-let s:default_root_markers = get(g:, 'tasksystem_root_markers', '')
+let s:default_root_markers = get(g:, 'tasksystem_rootMarkers', '')
 if has("win32") || has("win64")
     let s:is_windows = 1
 else

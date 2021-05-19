@@ -15,15 +15,16 @@ let g:loaded_tasksystem = 1
 
 let s:tasksystem_version = '1.0.0'
 if has("nvim")
-    let s:default_global_path = "~/.config/nvim"
+    let s:default_globalPath = "~/.config/nvim"
 else
-    let s:default_global_path = "~/.vim"
+    let s:default_globalPath = "~/.vim"
 endif
 
 let g:tasksystem_nvim = has("nvim")
-let g:tasksystem_tasks_name = get(g:, 'tasksystem_tasks_name', 'tasks.json')
-let g:tasksystem_global_path = get(g:, 'tasksystem_global_path', s:default_global_path)
-let g:tasksystem_root_markers = get(g:, 'tasksystem_root_markers', ['.project', '.root', '.git', '.hg', '.svn'])
+let g:tasksystem_globalPath = get(g:, 'tasksystem_globalPath', s:default_globalPath)
+let g:tasksystem_rootMarkers = get(g:, 'tasksystem_rootMarkers', ['.project', '.root', '.git', '.hg', '.svn'])
+let g:tasksystem_localTasksName = get(g:, 'tasksystem_localTasksName', '.tasks.json')
+let g:tasksystem_globalTasksName = get(g:, 'tasksystem_globalTasksName', 'tasks.json')
 
 
 command! -bang -nargs=+ -range=0 -complete=customlist,tasksystem#complete Tasksystem call tasksystem#run(<bang>0, <q-args>)

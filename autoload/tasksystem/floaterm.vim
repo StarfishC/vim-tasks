@@ -3,7 +3,7 @@
 " File:           floaterm.vim
 " Author:         caoshenghui <576365750@qq.com>
 " Github:         https://github.com/caoshenghui
-" Description:
+" Description:    Run tasks in voldikss/vim-floaterm
 " LICENSE:        MIT
 " ============================================================================
 

@@ -25,7 +25,6 @@ function! tasksystem#run(bang, label) abort
 
         " process predefinedvars
         let params = tasksystem#predefinedvars#process_macros(params)
-        return
         let type = get(params, 'type', 'floaterm')
         if type == 'floaterm'
             call tasksystem#floaterm#run(a:bang, params)

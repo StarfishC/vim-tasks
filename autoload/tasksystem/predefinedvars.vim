@@ -61,11 +61,19 @@ endfunc
 function! tasksystem#predefinedvars#process_macros(opts) abort
     let macros = s:expand_macros()
     let params = a:opts
+    let subpattern = '\${[a-zA-Z]\{-}}'
+    let keypattern = '[a-zA-Z]\+'
     for key in keys(params)
-        let substr = matchstr(params[key], '\${[a-zA-Z]\{-}}')
-        let keystr = matchstr(substr, '\[a-zA-Z]+')
-        echo substr
-        echo keystr
+        while v:true
+            let substr = matchstr(params[key], subpattern)
+            let keystr = matchstr(substr, keypattern)
+            if has_key(macros, keystr)
+                let retstr = substitute(params[key], substr, macros[keystr], 'g')
+                let params[key] = retstr
+            else
+                break
+            endif
+        endwhile
     endfor
-    return
+    return params
 endfunction

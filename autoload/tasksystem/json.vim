@@ -9,9 +9,10 @@
 
 
 " local variables
+let s:local_json_name = get(g:, "tasksystem_localTasksName", "")
+let s:global_json_name = get(g:, "tasksystem_globalTasksName", "")
 let s:default_local_path = tasksystem#path#get_root()
-let s:default_global_path = get(g:, "tasksystem_global_path", ".")
-let s:json_name = get(g:, "tasksystem_tasks_name", "")
+let s:default_global_path = get(g:, "tasksystem_globalPath", ".")
 let s:is_nvim = has("nvim")
 let s:namecompleteopts = []
 let s:tasksinfo = {}
@@ -70,8 +71,8 @@ endfunction
 
 " extract json file configs
 function! s:json_getconfig() abort
-    let l:filelist = [s:default_global_path . '/' . s:json_name,
-                     \s:default_local_path . '/' . s:json_name]
+    let l:filelist = [s:default_global_path . '/' . s:global_json_name,
+                     \s:default_local_path . '/' . s:local_json_name]
     let s:namecompleteopts = []
     let s:tasksinfo = {}
     for filepath in filelist

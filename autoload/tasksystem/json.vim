@@ -14,8 +14,6 @@ let s:global_json_name = get(g:, "tasksystem_globalTasksName", "")
 let s:default_local_path = tasksystem#path#get_root()
 let s:default_global_path = get(g:, "tasksystem_globalPath", ".")
 let s:is_nvim = has("nvim")
-let s:namecompleteopts = []
-let s:tasksinfo = {}
 
 
 " read json file
@@ -69,38 +67,17 @@ function! s:json_decode(filename) abort
     endif
 endfunction
 
+
 " extract json file configs
-function! s:json_getconfig() abort
+function! tasksystem#json#taskinfo() abort
     let l:filelist = [s:default_global_path . '/' . s:global_json_name,
                      \s:default_local_path . '/' . s:local_json_name]
     let s:namecompleteopts = []
     let s:tasksinfo = {}
     for filepath in filelist
-        let l:jsoncontents = s:json_decode(filepath)
-        if l:jsoncontents != {}
-            for tmp in l:jsoncontents.tasks
-                if get(tmp, 'label', '') == ''
-                    call tasksystem#utils#errmsg('tasks miss "label"')
-                endif
-                let s:tasksinfo[tmp.label] = {}
-                call add(s:namecompleteopts, tmp.label)
-                for key in keys(tmp)
-                    let s:tasksinfo[tmp.label][key] = tmp[key]
-                endfor
-            endfor
-        endif
+        let jsoncontents = s:json_decode(filepath)
     endfor
-    return 1
+    return jsoncontents
 endfunction
 
-
-function! tasksystem#json#namelist() abort
-    call s:json_getconfig()
-    return s:namecompleteopts
-endfunction
-
-function! tasksystem#json#taskinfo() abort
-    call s:json_getconfig()
-    return s:tasksinfo
-endfunction
 

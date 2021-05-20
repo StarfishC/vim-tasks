@@ -13,7 +13,13 @@ function! tasksystem#complete(ArgLead, CmdLine, CursorPos) abort
 endfunction
 
 function! tasksystem#run(bang, label) abort
+    " from json file get all settings
     let opts = tasksystem#json#taskinfo()
+    echo opts
+    " process tasks's parameters
+    let opts = tasksystem#params#process(opts)
+    echo opts
+    return
     " check params
     if has_key(opts, a:label)
         let params = opts[a:label]
@@ -27,3 +33,5 @@ function! tasksystem#run(bang, label) abort
         call tasksystem#utils#errmsg(a:label . " task not exist!")
     endif
 endfunction
+
+call tasksystem#run('!', '12')

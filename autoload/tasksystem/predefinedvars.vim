@@ -55,25 +55,73 @@ function! s:expand_macros() abort
     " let macros['selectedText'] = ''
 
 	return macros
-endfunc
+endfunction
+
+function! s:schema_params(args) abort
+    let params = {}
+    let params.type = get(a:args, "type", "floaterm")
+    let params.command = get(a:args, 'command', '')
+    let params.isBackground = get(a:args, 'isBackground', v:false)
+    let params.options = get(a:args, 'options', {})
+    let params.options.cwd = get(params.options, 'cwd', {"${workspaceFolder}"})
+    " let params.options.env = get(params.options, 'env', {})       unuseful now
+    " let params.options.shell = get(params.options, 'shell', {})   unuseful now
+    let params.args = get(a:args, 'args', [])
+    let params.presentation = get(a:args, 'presentation', {})
+    let params.tasks = get(a:args, 'tasks', [])
+endfunction
 
 
+" like vscode, it only supports 'command', 'args', 'options', 'filetype'
 function! tasksystem#predefinedvars#process_macros(opts) abort
     let macros = s:expand_macros()
     let params = a:opts
     let subpattern = '\${[a-zA-Z]\{-}}'
     let keypattern = '[a-zA-Z]\+'
-    for key in keys(params)
+    if has_key(params, 'command')
         while v:true
-            let substr = matchstr(params[key], subpattern)
-            let keystr = matchstr(substr, keypattern)
+            let substr = matchstr(params.command, subpattern)
+            let keystr = matchstr(params.command, keypattern)
             if has_key(macros, keystr)
-                let retstr = substitute(params[key], substr, macros[keystr], 'g')
-                let params[key] = retstr
+                let retstr = substitute(params.command, substr, macros[keystr], 'g')
+                let params.command = retstr
             else
                 break
             endif
         endwhile
-    endfor
+    endif
+    if has_key(params, 'args')
+        let args = []
+        for arg in params.args
+            while v:true
+                let substr = matchstr(arg, subpattern)
+                let keystr = matchstr(arg, keypattern)
+                if has_key(macros, keystr)
+                    let arg = substitute(arg, substr, macros[keystr], 'g')
+                else
+                    call add(args, arg)
+                    break
+                endif
+            endwhile
+        endfor
+        let params.args = args
+    endif
+    if has_key(params, 'options')
+        for key in keys(params.options)
+            if type(params.options[key]) != v:t_string
+                continue
+            endif
+            while v:true
+                let substr = matchstr(params.options[key], subpattern)
+                let keystr = matchstr(substr, keypattern)
+                if has_key(macros, keystr)
+                    let retstr = substitute(params.options[key], substr, macros[keystr], 'g')
+                    let params.options[key] = retstr
+                else
+                    break
+                endif
+            endwhile
+        endfor
+    endif
     return params
 endfunction

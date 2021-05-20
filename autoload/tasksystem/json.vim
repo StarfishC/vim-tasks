@@ -79,18 +79,13 @@ function! s:json_getconfig() abort
         let l:jsoncontents = s:json_decode(filepath)
         if l:jsoncontents != {}
             for tmp in l:jsoncontents.tasks
-                if get(tmp, 'label', 'error') == 'error'
+                if get(tmp, 'label', '') == ''
                     call tasksystem#utils#errmsg('tasks miss "label"')
-                    return 0
                 endif
                 let s:tasksinfo[tmp.label] = {}
                 call add(s:namecompleteopts, tmp.label)
                 for key in keys(tmp)
-                    if key == 'args'
-                        let s:tasksinfo[tmp.label][key] = join(tmp[key], ' ')
-                    else
-                        let s:tasksinfo[tmp.label][key] = tmp[key]
-                    endif
+                    let s:tasksinfo[tmp.label][key] = tmp[key]
                 endfor
             endfor
         endif

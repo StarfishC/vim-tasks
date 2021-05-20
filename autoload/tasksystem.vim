@@ -17,12 +17,6 @@ function! tasksystem#run(bang, label) abort
     " check params
     if has_key(opts, a:label)
         let params = opts[a:label]
-        if get(params, 'command', '') == ''
-            call tasksystem#utils#errmsg("task miss command")
-        endif
-        let cmd = params.command . ' ' . get(params, 'args', '')
-        let params.cmd = cmd
-
         " process predefinedvars
         let params = tasksystem#predefinedvars#process_macros(params)
         let type = get(params, 'type', 'floaterm')

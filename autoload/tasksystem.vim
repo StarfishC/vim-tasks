@@ -14,10 +14,10 @@ endfunction
 
 function! tasksystem#run(bang, label) abort
     " from json file get all settings
-    let opts = tasksystem#json#taskinfo()
-    echo opts
+    let localopts = tasksystem#json#localtasks()
+    let globalopts = tasksystem#json#globaltasks()
     " process tasks's parameters
-    let opts = tasksystem#params#process(opts)
+    let opts = tasksystem#params#process(localopts)
     echo opts
     return
     " check params

@@ -73,7 +73,8 @@ function! s:schema_params(opts) abort
     " let params.options.env = get(params.options, 'env', {})       unuseful now
     " let params.options.shell = get(params.options, 'shell', {})   unuseful now
     let params.args = get(a:opts, 'args', [])
-    let params.presentation = get(a:opts, 'presentation', {})
+    let params.presentation = get(a:opts, 'presentation', 
+                            \ {"reveal": "always", "echo" : v:false, "focus": v:true, "panel": "new"})
     return params
 endfunction
 
@@ -148,12 +149,12 @@ function! tasksystem#params#process(opts) abort
     endfor
 endfunction
 
-function! tasksystem#json#namelist() abort
-    call s:json_getconfig()
-    return s:namecompleteopts
-endfunction
-
-function! tasksystem#json#taskinfo() abort
-    call s:json_getconfig()
-    return s:tasksinfo
-endfunction
+" function! tasksystem#json#namelist() abort
+"     call s:json_getconfig()
+"     return s:namecompleteopts
+" endfunction
+" 
+" function! tasksystem#json#taskinfo() abort
+"     call s:json_getconfig()
+"     return s:tasksinfo
+" endfunction

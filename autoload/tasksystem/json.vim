@@ -68,16 +68,14 @@ function! s:json_decode(filename) abort
 endfunction
 
 
-" extract json file configs
-function! tasksystem#json#taskinfo() abort
-    let l:filelist = [s:default_global_path . '/' . s:global_json_name,
-                     \s:default_local_path . '/' . s:local_json_name]
-    let s:namecompleteopts = []
-    let s:tasksinfo = {}
-    for filepath in filelist
-        let jsoncontents = s:json_decode(filepath)
-    endfor
-    return jsoncontents
+" extract local json file configs
+function! tasksystem#json#localtasks() abort
+    return s:json_decode(s:default_local_path . '/' . s:local_json_name)
 endfunction
 
+function! tasksystem#json#globaltasks() abort
+    return s:json_decode(s:default_global_path . '/' . s:global_json_name)
+endfunction
 
+function! tasksystem#json#taskinfo()
+endfunction

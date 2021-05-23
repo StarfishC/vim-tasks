@@ -68,14 +68,11 @@ function! s:json_decode(filename) abort
 endfunction
 
 
-" extract local json file configs
-function! tasksystem#json#localtasks() abort
-    return s:json_decode(s:default_local_path . '/' . s:local_json_name)
-endfunction
-
-function! tasksystem#json#globaltasks() abort
-    return s:json_decode(s:default_global_path . '/' . s:global_json_name)
-endfunction
-
+" get taskinfo from json
 function! tasksystem#json#taskinfo()
+    let ret = {}
+    let ret.local = s:json_decode(s:default_local_path . '/' . s:local_json_name)
+    let ret.global = s:json_decode(s:default_global_path . '/' . s:global_json_name)
+    return ret
 endfunction
+

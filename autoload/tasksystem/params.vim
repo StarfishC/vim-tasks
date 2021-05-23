@@ -34,7 +34,6 @@ endif
 let s:namecompleteopts = []     " Tasksystem complete
 let s:tasksinfo = {}            " all tasks
 let s:filetypetaskinfo = {}     " task for specific filetype
-let s:macros = s:expand_macros()
 
 
 " predefinedvars like vscode
@@ -73,13 +72,15 @@ function! s:schema_params(opts) abort
     " let params.options.env = get(params.options, 'env', {})       unuseful now
     " let params.options.shell = get(params.options, 'shell', {})   unuseful now
     let params.args = get(a:opts, 'args', [])
-    let params.presentation = get(a:opts, 'presentation', 
+    let params.presentation = get(a:opts, 'presentation',
                             \ {"reveal": "always", "echo" : v:false, "focus": v:true, "panel": "new"})
+    let params.tasks = get(a:opts, 'tasks', [])
     return params
 endfunction
 
 " transfer predefinedvars
 function! s:transfer_vars(str) abort
+    let macros = s:expand_macros()
     if type(a:str) != v:t_string
         return a:str
     endif
@@ -89,8 +90,8 @@ function! s:transfer_vars(str) abort
     while v:true
         let substr = matchstr(tmp, subpattern)
         let keystr = matchstr(tmp, keypattern)
-        if has_key(s:macros, keystr)
-            let tmp = substitute(tmp, substr, s:macros[keystr], 'g')
+        if has_key(macros, keystr)
+            let tmp = substitute(tmp, substr, macros[keystr], 'g')
         else
             break
         endif
@@ -98,20 +99,23 @@ function! s:transfer_vars(str) abort
     return tmp
 endfunction
 
-
-" like vscode, it only supports 'command', 'args', 'options', 'filetype'
-function! tasksystem#params#process(opts) abort
-    let s:namecompleteopts = []
-    let s:tasksinfo = {}
-    let s:filetypetaskinfo = {}
-    echo a:opts
-    return
+" like vscode, predefinedvars only supports 'command', 'args', 'options', 'filetype'
+function! s:process_params(opts) abort
+    let defaultparams = s:schema_params(a:opts)
+    let taskinfo = {}
     for task in a:opts.tasks
         if get(task, 'label', '') == ''
             call tasksystem#utils#errmsg('task miss "label"')
         endif
         call add(s:namecompleteopts, task.label)
-        let task = s:schema_params(task)
+        " complete task's params
+        let task.type = get(task, 'type', defaultparams.type)
+        let task.command = get(task, 'command', defaultparams.command)
+        let task.isBackground = get(task, 'isBackground', defaultparams.isBackground)
+        let task.options = get(task, 'options', defaultparams.options)
+        let task.args = get(task, 'args', defaultparams.args)
+        let task.presentation = get(task, 'presentation', defaultparams.presentation)
+        " repalce predefinedvars
         let task.command = s:transfer_vars(task.command)
         for i in range(len(task.args))
             let task.args[i] = s:transfer_vars(task.args[i])
@@ -120,6 +124,9 @@ function! tasksystem#params#process(opts) abort
             let task.options[key] = s:transfer_vars(task.options[key])
         endfor
         let task.filetype = get(task, 'filetype', {})
+        if task.filetype == {}
+            let s:filetypetaskinfo["*"] = [task.label]
+        endif
         for key in keys(task.filetype)
             let ft = task.filetype[key]
             let ft.command = (get(ft, 'command', '') == '') ? task.command : s:transfer_vars(ft.command)
@@ -137,24 +144,36 @@ function! tasksystem#params#process(opts) abort
                 if type(ft.options) != v:t_dict
                     call tasksystem#utils#errmsg("parameter 'options' is must a dict")
                 endif
-                for key in keys(ft.options)
-                    let ft.options[key] = s:transfer_vars(ft.options[key])
+                for tmp in keys(ft.options)
+                    let ft.options[tmp] = s:transfer_vars(ft.options[tmp])
                 endfor
             else
                 let ft.options = task.options
             endif
             " add label-opts to s:filetypetaskinfo
+            let s:filetypetaskinfo[key] = get(s:filetypetaskinfo, key, [])
+            call add(s:filetypetaskinfo[key], task.label)
         endfor
-        let s:tasksinfo[key] = task
+        let taskinfo[task.label] = task
     endfor
+    return taskinfo
 endfunction
 
-" function! tasksystem#json#namelist() abort
-"     call s:json_getconfig()
-"     return s:namecompleteopts
-" endfunction
-" 
-" function! tasksystem#json#taskinfo() abort
-"     call s:json_getconfig()
-"     return s:tasksinfo
-" endfunction
+
+function! tasksystem#params#process(taskinfo) abort
+    let s:namecompleteopts = []
+    let s:filetypetaskinfo = {}
+    let ret = {}
+    for task in keys(a:taskinfo)
+        let ret[task] = s:process_params(a:taskinfo[task])
+    endfor
+    return ret
+endfunction
+
+function! tasksystem#params#namelist() abort
+    return s:namecompleteopts
+endfunction
+
+function! tasksystem#params#fttaskinfo() abort
+    return s:filetypetaskinfo
+endfunction

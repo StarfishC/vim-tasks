@@ -9,24 +9,10 @@
 
 
 function! tasksystem#complete(ArgLead, CmdLine, CursorPos) abort
-    return []
+    return tasksystem#params#namelist()
 endfunction
 
 function! tasksystem#run(bang, label) abort
-    " from json file get local and global settings
-    let taskinfo = tasksystem#json#taskinfo()
-    " process tasks's parameters
-    " 需要改进这个函数，性能太差了
-    let taskinfo = tasksystem#params#process(taskinfo)
-    let fttaskinfo = tasksystem#params#fttaskinfo()
-    if has_key(fttaskinfo, &filetype)
-        echo a:label
-        echo fttaskinfo[&filetype]
-        if get(fttaskinfo[&filetype], a:label, '') != ''
-        endif
-    endif
-    return
-    " check params
     if has_key(opts, a:label)
         let params = opts[a:label]
         " process predefinedvars

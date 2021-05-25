@@ -117,20 +117,20 @@ function! s:expand_macros() abort
 	return macros
 endfunction
 
-" preset parameters
-function! s:schema_params(opts) abort
+" default parameters
+function! s:schema_params(opts, rep) abort
     let params = a:opts
-    let params.type = get(a:opts, "type", "floaterm")
-    let params.command = get(a:opts, 'command', '')
-    let params.isBackground = get(a:opts, 'isBackground', v:false)
-    let params.options = get(a:opts, 'options', {})
-    let params.options.cwd = get(params.options, 'cwd', "${workspaceFolder}")
+    let params.type = get(a:opts, "type", get(a:rep, "type", "floaterm"))
+    let params.command = get(a:opts, 'command', get(a:rep, "command", ""))
+    let params.isBackground = get(a:opts, 'isBackground', get(a:rep, "isBackground", v:false))
+    let params.options = get(a:opts, 'options', get(a:rep, "options", {}))
+    let params.options.cwd = get(params.options, 'cwd', get(get(a:rep, "options", {}), "cwd", "${workspaceFolder}"))
     " let params.options.env = get(params.options, 'env', {})       unuseful now
     " let params.options.shell = get(params.options, 'shell', {})   unuseful now
-    let params.args = get(a:opts, 'args', [])
-    let params.presentation = get(a:opts, 'presentation',
-                            \ {"reveal": "always", "echo" : v:false, "focus": v:true, "panel": "new"})
-    let params.tasks = get(a:opts, 'tasks', [])
+    let params.args = get(a:opts, 'args', get(a:rep, "args", []))
+    let params.presentation = get(a:opts, 'presentation', get(a:rep, "presentation",
+                            \ {"reveal": "always", "echo" : v:false, "focus": v:true, "panel": "new"}))
+    let params.tasks = get(a:opts, 'tasks', get(a:rep, "tasks", []))
     return params
 endfunction
 
@@ -157,23 +157,24 @@ endfunction
 
 " like vscode, predefinedvars only supports 'command', 'args', 'options', 'filetype'
 function! s:process_params(name, opts) abort
-    let defaultparams = s:schema_params(a:opts)
-    let taskinfo = {}
+    if a:opts == {}
+        return
+    endif
+    let defaultparams = s:schema_params(a:opts, {})
     for task in a:opts.tasks
         if get(task, 'label', '') == ''
             call tasksystem#utils#errmsg('task miss "label"')
         endif
-        if has_key(s:namecompleteopts, task.label)
-            let task.label = task.label . "::" . name
+        if get(s:namecompleteopts, task.label)
+            let task.label = task.label . "::" . a:name
         endif
         call add(s:namecompleteopts, task.label)
         " complete task's params
-        let task.type = get(task, 'type', defaultparams.type)
-        let task.command = get(task, 'command', defaultparams.command)
-        let task.isBackground = get(task, 'isBackground', defaultparams.isBackground)
-        let task.options = get(task, 'options', defaultparams.options)
-        let task.args = get(task, 'args', defaultparams.args)
-        let task.presentation = get(task, 'presentation', defaultparams.presentation)
+        echo task
+        echo "\r\n"
+        let task = s:schema_params(task, defaultparams)
+        echo task
+        return
         " repalce predefinedvars
         let task.command = s:transfer_vars(task.command)
         for i in range(len(task.args))
@@ -184,7 +185,12 @@ function! s:process_params(name, opts) abort
         endfor
         let task.filetype = get(task, 'filetype', {})
         if task.filetype == {}
-            let s:filetypetaskinfo["*"] = [task.label]
+            if has_key(s:filetypetaskinfo, "*")
+                call add(s:filetypetaskinfo["*"], task.label)
+            else
+                let s:filetypetaskinfo["*"] = []
+                call add(s:filetypetaskinfo["*"], task.label)
+            endif
         endif
         for key in keys(task.filetype)
             let ft = task.filetype[key]
@@ -210,33 +216,43 @@ function! s:process_params(name, opts) abort
                 let ft.options = task.options
             endif
             " add label-opts to s:filetypetaskinfo
-            let s:filetypetaskinfo[key] = get(s:filetypetaskinfo, key, [])
-            call add(s:filetypetaskinfo[key], task.label)
+            if has_key(s:filetypetaskinfo, key)
+                call add(s:filetypetaskinfo[key], task.label)
+            else
+                let s:filetypetaskinfo[key] = []
+                call add(s:filetypetaskinfo[key], task.label)
+            endif
         endfor
-        let taskinfo[task.label] = task
+        let s:tasksinfo[task.label] = task
     endfor
-    return taskinfo
 endfunction
 
 
 function! tasksystem#params#namelist() abort
     call tasksystem#params#taskinfo()
-    return s:namecompleteopts
+    let item = []
+    if has_key(s:filetypetaskinfo, &filetype)
+        let item = s:filetypetaskinfo[&filetype]
+    endif
+    call extend(item, s:filetypetaskinfo['*'])
+    return item
 endfunction
 
 function! tasksystem#params#fttaskinfo() abort
     return s:filetypetaskinfo
 endfunction
 
-function! tasksystem#params#taskinfo()
+function! tasksystem#params#taskinfo() abort
     let s:namecompleteopts = []
     let s:filetypetaskinfo = {}
-    let ret = {}
-    let ret.local = s:json_decode(s:default_local_path . '/' . s:local_json_name)
-    let ret.global = s:json_decode(s:default_global_path . '/' . s:global_json_name)
+    let s:tasksinfo = {}
+    let ret = {'global': s:default_global_path . '/' . s:global_json_name,
+             \ 'local': s:default_global_path . '/' . s:local_json_name}
     for task in keys(ret)
-        let ret[task] = s:process_params(task, ret[task])
+        call s:process_params(task, s:json_decode(ret[task]))
     endfor
-    return ret
+    return s:tasksinfo
 endfunction
+
+echo tasksystem#params#taskinfo()
 

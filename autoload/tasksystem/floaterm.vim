@@ -9,6 +9,8 @@
 
 
 function! s:floaterm_params(opts) abort
+    echo a:opts
+    return
     let params = {}
     if get(a:opts, 'cwd', '') == ''
         let params.cwd = fnameescape(getcwd())
@@ -55,6 +57,7 @@ function! s:floaterm_run(bang, opts) abort
         let cmd = 'FloatermNew'
     endif
     let params = s:floaterm_params(a:opts)
+    return
     for key in keys(params)
         let cmd .= ' --' . key . '=' . params[key]
     endfor
@@ -114,3 +117,4 @@ function! tasksystem#floaterm#run(bang, opts) abort
     endif
 endfunction
 
+call tasksystem#run('', 'run')

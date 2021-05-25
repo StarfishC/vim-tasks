@@ -13,10 +13,10 @@ function! tasksystem#complete(ArgLead, CmdLine, CursorPos) abort
 endfunction
 
 function! tasksystem#run(bang, label) abort
-    if has_key(opts, a:label)
-        let params = opts[a:label]
-        " process predefinedvars
-        let params = tasksystem#predefinedvars#process_macros(params)
+    let taskinfo = tasksystem#params#taskinfo()
+    let ftinfo = tasksystem#params#fttaskinfo()
+    if has_key(taskinfo, a:label)
+        let params = taskinfo[a:label]
         let type = get(params, 'type', 'floaterm')
         if type == 'floaterm'
             call tasksystem#floaterm#run(a:bang, params)
@@ -26,4 +26,4 @@ function! tasksystem#run(bang, label) abort
     endif
 endfunction
 
-" call tasksystem#run('', '12')
+" call tasksystem#run('', 'run')

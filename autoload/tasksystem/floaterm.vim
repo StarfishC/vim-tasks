@@ -9,44 +9,44 @@
 
 
 function! s:floaterm_params(opts) abort
-    echo a:opts
-    return
     let params = {}
-    if get(a:opts, 'cwd', '') == ''
-        let params.cwd = fnameescape(getcwd())
+    let params.cwd = fnameescape(a:opts.options.cwd)
+    if has_key(a:opts.options, 'name')
+        let params.name = fnameescape(a:opts.options.name)
+    endif
+    if has_key(a:opts.options, 'width')
+        let params.width = a:opts.options.width
+    endif
+    if has_key(a:opts.options, 'height')
+        let params.height = a:opts.options.height
+    endif
+    if has_key(a:opts.options, 'title')
+        let params.title = fnameescape(a:opts.options.title)
+    endif
+    if has_key(a:opts.options, 'wintype')
+        let params.wintype = a:opts.options.wintype
+    endif
+    if has_key(a:opts.options, 'position')
+        let params.position = a:opts.options.position
+    endif
+    if has_key(a:opts.options, 'opener')
+        let params.opener = a:opts.options.opener
+    endif
+    if has_key(a:opts.options, 'silent')
+        let params.silent = a:opts.options.silent
     else
-        let params.cwd = fnameescape(a:opts.cwd)
+        let params.silent = get(a:opts.presentation, 'reveal', 'silent') != 'silent' ? 0 : 1
     endif
-    if has_key(a:opts, 'name')
-        let params.name = fnameescape(a:opts.name)
+    if has_key(a:opts.options, 'disposable')
+        let params.disposable = a:opts.options.disposable
     endif
-    if has_key(a:opts, 'width')
-        let params.width = a:opts.width
+    if has_key(a:opts.options, 'autoclose')
+        let params.autoclose = a:opts.options.autoclose
     endif
-    if has_key(a:opts, 'height')
-        let params.height = a:opts.height
-    endif
-    if has_key(a:opts, 'title')
-        let params.title = fnameescape(a:opts.title)
-    endif
-    if has_key(a:opts, 'wintype')
-        let params.wintype = a:opts.wintype
-    endif
-    if has_key(a:opts, 'position')
-        let params.position = a:opts.position
-    endif
-    if has_key(a:opts, 'opener')
-        let params.opener = a:opts.opener
-    endif
-    if has_key(a:opts, 'silent')
-        let params.silent = a:opts.silent
-    endif
-    if has_key(a:opts, 'disposable')
-        let params.disposable = a:opts.disposable
-    endif
-    if has_key(a:opts, 'autoclose')
-        let params.autoclose = a:opts.autoclose
-    endif
+    let params.cmd = a:opts.command
+    for cmd in a:opts.args
+        let params.cmd .= ' ' . cmd
+    endfor
     return params
 endfunction
 
@@ -57,13 +57,14 @@ function! s:floaterm_run(bang, opts) abort
         let cmd = 'FloatermNew'
     endif
     let params = s:floaterm_params(a:opts)
-    return
     for key in keys(params)
         let cmd .= ' --' . key . '=' . params[key]
     endfor
-    if get(a:opts, 'cmd', '') != ''
-        let cmd .= ' ' . a:opts.cmd
-    endif
+    let cmdline = a:opts.command
+    for arg in a:opts.args
+        let cmdline .= ' ' . arg
+    endfor
+    let cmd .= ' ' . cmdline
     exec cmd
     if get(a:opts, 'focus', 1) == 0
         stopinsert | noa wincmd p
@@ -96,8 +97,13 @@ function! s:floaterm_run_reuse(bang, opts) abort
         FloatermHide!
     endif
     let cmd = 'cd ' . shellescape(params.cwd)
+    let cmdline = a:opts.command
+    for arg in a:opts.args
+        let cmdline .= ' ' . arg
+    endfor
     call floaterm#terminal#send(curr_bufnr, [cmd])
-    call floaterm#terminal#send(curr_bufnr, [a:opts.cmd])
+    call floaterm#terminal#send(curr_bufnr, ["clear"])
+    call floaterm#terminal#send(curr_bufnr, [cmdline])
     stopinsert
     if &filetype == 'floaterm' && g:floaterm_autoinsert
         call floaterm#util#startinsert()
@@ -110,11 +116,10 @@ function! tasksystem#floaterm#run(bang, opts) abort
     if exists(':FloatermNew') != 2
         return tasksystem#utils#errmsg("require voldikss/vim-floatem")
     endif
-    if get(a:opts, 'reuse', 0) == 1
-        call s:floaterm_run_reuse(a:bang, a:opts)
+    if get(a:opts.presentation, 'panel', 'new') != 'new'
+        call s:floaterm_run_reuse(v:true, a:opts)
     else
         call s:floaterm_run(a:bang, a:opts)
     endif
 endfunction
 
-call tasksystem#run('', 'run')

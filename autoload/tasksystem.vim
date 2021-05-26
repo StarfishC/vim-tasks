@@ -15,8 +15,12 @@ endfunction
 function! tasksystem#run(bang, label) abort
     let taskinfo = tasksystem#params#taskinfo()
     let ftinfo = tasksystem#params#fttaskinfo()
-    if has_key(taskinfo, a:label)
-        let params = taskinfo[a:label]
+    let label = a:label
+    if has_key(ftinfo, &filetype) && index(ftinfo[&filetype], a:label) != -1
+        let label = a:label . "::" . &filetype
+    endif
+    if has_key(taskinfo, label)
+        let params = taskinfo[label]
         let type = get(params, 'type', 'floaterm')
         if type == 'floaterm'
             call tasksystem#floaterm#run(a:bang, params)
@@ -26,4 +30,4 @@ function! tasksystem#run(bang, label) abort
     endif
 endfunction
 
-" call tasksystem#run('', 'run')
+" call tasksystem#run('', 'floaterm_test')

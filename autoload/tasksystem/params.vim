@@ -128,9 +128,16 @@ function! s:schema_params(opts, rep) abort
     " let params.options.env = get(params.options, 'env', {})       unuseful now
     " let params.options.shell = get(params.options, 'shell', {})   unuseful now
     let params.args = get(a:opts, 'args', get(a:rep, "args", []))
-    let params.presentation = get(a:opts, 'presentation', get(a:rep, "presentation",
-                            \ {"reveal": "always", "echo" : v:false, "focus": v:true, "panel": "new"}))
-    let params.tasks = get(a:opts, 'tasks', get(a:rep, "tasks", []))
+    let presentation = {"reveal": "always", "echo" : v:false, "focus": v:true, "panel": "new"}
+    let params.presentation = get(a:opts, 'presentation', get(a:rep, "presentation", presentation))
+    let params.presentation.reveal = get(a:opts.presentation, 'reveal', get(get(a:rep, 'presentation', presentation), 'reveal', 'always'))
+    let params.presentation.echo = get(a:opts.presentation, 'echo', get(get(a:rep, 'presentation', presentation), 'echo', v:false))
+    let params.presentation.focus = get(a:opts.presentation, 'focus', get(get(a:rep, 'presentation', presentation), 'focus', v:true))
+    let params.presentation.panel = get(a:opts.presentation, 'panel', get(get(a:rep, 'presentation', presentation), 'panel', "new"))
+    " let params.tasks = get(a:opts, 'tasks', get(a:rep, "tasks", []))
+    if a:rep == {}
+        let params.tasks = get(a:opts, 'tasks', [])
+    endif
     return params
 endfunction
 
@@ -170,11 +177,7 @@ function! s:process_params(name, opts) abort
         endif
         call add(s:namecompleteopts, task.label)
         " complete task's params
-        echo task
-        echo "\r\n"
         let task = s:schema_params(task, defaultparams)
-        echo task
-        return
         " repalce predefinedvars
         let task.command = s:transfer_vars(task.command)
         for i in range(len(task.args))
@@ -191,30 +194,19 @@ function! s:process_params(name, opts) abort
                 let s:filetypetaskinfo["*"] = []
                 call add(s:filetypetaskinfo["*"], task.label)
             endif
+            let s:tasksinfo[task.label] = task
         endif
         for key in keys(task.filetype)
             let ft = task.filetype[key]
-            let ft.command = (get(ft, 'command', '') == '') ? task.command : s:transfer_vars(ft.command)
-            if has_key(ft, 'args')
-                if type(ft.args) != v:t_list
-                    call tasksystem#utils#errmsg("parameter 'args' is must a list")
-                endif
-                for i in range(len(ft.args))
-                    let ft.args[i] = s:transfer_vars(ft.args[i])
-                endfor
-            else
-                let ft.args = task.args
-            endif
-            if has_key(ft, 'options')
-                if type(ft.options) != v:t_dict
-                    call tasksystem#utils#errmsg("parameter 'options' is must a dict")
-                endif
-                for tmp in keys(ft.options)
-                    let ft.options[tmp] = s:transfer_vars(ft.options[tmp])
-                endfor
-            else
-                let ft.options = task.options
-            endif
+            let ft = s:schema_params(ft, task)
+            let ft.command = s:transfer_vars(ft.command)
+            for i in range(len(ft.args))
+                let ft.args[i] = s:transfer_vars(ft.args[i])
+            endfor
+            for tmp in keys(ft.options)
+                let ft.options[tmp] = s:transfer_vars(ft.options[tmp])
+            endfor
+            let ft.label = task.label . "::" . key
             " add label-opts to s:filetypetaskinfo
             if has_key(s:filetypetaskinfo, key)
                 call add(s:filetypetaskinfo[key], task.label)
@@ -222,8 +214,8 @@ function! s:process_params(name, opts) abort
                 let s:filetypetaskinfo[key] = []
                 call add(s:filetypetaskinfo[key], task.label)
             endif
+            let s:tasksinfo[ft.label] = ft
         endfor
-        let s:tasksinfo[task.label] = task
     endfor
 endfunction
 
@@ -253,6 +245,4 @@ function! tasksystem#params#taskinfo() abort
     endfor
     return s:tasksinfo
 endfunction
-
-echo tasksystem#params#taskinfo()
 

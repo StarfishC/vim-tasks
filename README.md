@@ -63,7 +63,7 @@ Predefinedvars like vscode
 
 Schema for Tasksystem's tasks.json:
 
-```json
+```jsonc
 interface TaskConfiguration extends BaseTaskConfiguration {
   /**
    * The configuration's version number

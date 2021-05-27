@@ -1,0 +1,43 @@
+{
+  "version": "1.0.0",
+  // This `isBackground` is a global option
+  "isBackground": false,
+  "tasks": [
+    {
+      "label": "fast-run",
+      "type": "floaterm",
+      "isBackground": false,
+      "presentation": {
+          "shared": "new"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "name": "123",
+        "width": 0.5,
+        "height": 0.5,
+        "title": "test",
+        "silent": 0,
+        "wintype": "float",
+        "position": "center",
+        "autoclose": 0
+      },
+      "filetype": {
+        "python": {
+          "command": "python3",
+          "args": ["${file}"],
+          "options": {
+            "cwd": "${workspaceFolder}"
+          }
+        },
+        "cpp": {
+          "command": "./a.out",
+          "args": [],
+          "options": {
+            "cwd": "${workspaceFolder}"
+          }
+        }
+      }
+    }
+  ]
+}
+

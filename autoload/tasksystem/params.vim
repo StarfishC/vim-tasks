@@ -199,6 +199,11 @@ function! s:process_params(name, opts) abort
         for key in keys(task.filetype)
             let ft = task.filetype[key]
             let ft = s:schema_params(ft, task)
+            for k in keys(task.options)
+                if !has_key(ft.options, k)
+                    let ft.options[k] = task.options[k]
+                endif
+            endfor
             let ft.command = s:transfer_vars(ft.command)
             for i in range(len(ft.args))
                 let ft.args[i] = s:transfer_vars(ft.args[i])
@@ -239,7 +244,7 @@ function! tasksystem#params#taskinfo() abort
     let s:filetypetaskinfo = {}
     let s:tasksinfo = {}
     let ret = {'global': s:default_global_path . '/' . s:global_json_name,
-             \ 'local': s:default_global_path . '/' . s:local_json_name}
+             \ 'local': s:default_local_path . '/' . s:local_json_name}
     for task in keys(ret)
         call s:process_params(task, s:json_decode(ret[task]))
     endfor

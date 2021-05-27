@@ -2,15 +2,17 @@
 
 An asynchronous task system like vscode on neovim
 
-> can't support vim now, beacause of the function(`json_decode`) in vim_
+> can't support vim now, beacause of the function(`json_decode`) in vim
+
+![Sceenshot][1]
 
 ## Features
 
-- [x] support [vim-floaterm](https://github.com/voldikss/vim-floaterm)
+- [x] support [vim-floaterm][2]
 - [ ] support sequent tasks
 - [ ] support terminal
 - [ ] support quickfix
-- [ ] list in [LeaderF](https://github.com/Yggdroot/LeaderF)
+- [ ] list in [LeaderF][3]
 
 ## Instruction
 
@@ -18,7 +20,7 @@ Vscode use a `.vscode/tasks.json` file to define project specific tasks. Similar
 
 ## Installtion
 
-For [vim-plug](https://github.com/junegunn/vim-plug)
+For [vim-plug][4]
 
 ```vim
 Plug 'caoshenghui/tasksystem'
@@ -57,7 +59,9 @@ Predefinedvars like vscode
 
 ### Options
 
-**Tasksystem** can support mostly vscode's options for `tasks.json`, you can learn more through [vscode's tasks](https://code.visualstudio.com/docs/editor/tasks) and [Schema for tasks.json](https://code.visualstudio.com/docs/editor/tasks-appendix)
+**Tasksystem** can support mostly vscode's options for `tasks.json`, you can learn more through [Vscode's tasks][5] and [Schema for tasks.json][6]
+
+Schema for Tasksystem's tasks.json:
 
 ```json
 interface TaskConfiguration extends BaseTaskConfiguration {
@@ -71,80 +75,50 @@ interface BaseTaskConfiguration {
   /**
    * The type of a custom task. Tasks of type "shell" are executed
    * a shell (e.g. floaterm)
+   * Defaults to 'floaterm'
    */
-  type: 'shell' | 'process';
+  type: string;
 
   /**
    * The command to be executed.
+   * Defaults to ''
    */
   command: string;
 
   /**
    * Specifies whether a global command is a background task.
+   * Defaults to false
    */
   isBackground?: boolean;
 
   /**
-   * The command options used when the command is executed. Can be omitted.
+   * The command options used when the command is executed.
    */
-  options?: CommandOptions;
+  options?: CommandOptions;  see `interface CommandOptions` for details
 
   /**
-   * The arguments passed to the command. Can be omitted.
+   * The arguments passed to the command.
+   * Defaults to []
    */
   args?: string[];
 
   /**
    * The presentation options.
    */
-  presentation?: PresentationOptions;
+  presentation?: PresentationOptions; see `interface PresentationOptions` for details
 
   /**
-   * The problem matcher to be used if a global command is executed (e.g. no tasks
-   * are defined). A tasks.json file can either contain a global problemMatcher
-   * property or a tasks property but not both.
+   * The configuration of the available tasks.
    */
-  problemMatcher?: string | ProblemMatcher | (string | ProblemMatcher)[];
-
-  /**
-   * The configuration of the available tasks. A tasks.json file can either
-   * contain a global problemMatcher property or a tasks property but not both.
-   */
-  tasks?: TaskDescription[];
+  tasks?: TaskDescription[]; see `interface TaskDescription` for details
 }
 
-/**
- * Options to be passed to the external program or shell
- */
 export interface CommandOptions {
   /**
    * The current working directory of the executed program or shell.
-   * If omitted the current workspace's root is used.
+   * Defaults to '${workspaceFolder}'
    */
   cwd?: string;
-
-  /**
-   * The environment of the executed program or shell. If omitted
-   * the parent process' environment is used.
-   */
-  env?: { [key: string]: string };
-
-  /**
-   * Configuration of the shell when task type is `shell`
-   */
-  shell: {
-    /**
-     * The shell to use.
-     */
-    executable: string;
-
-    /**
-     * The arguments to be passed to the shell executable to run in command mode
-     * (e.g ['-c'] for bash or ['/S', '/C'] for cmd.exe).
-     */
-    args?: string[];
-  };
-}
 
 /**
  * The description of a task.
@@ -157,48 +131,34 @@ interface TaskDescription {
 
   /**
    * The type of a custom task. Tasks of type "shell" are executed
-   * inside a shell (e.g. bash, cmd, powershell, ...)
+   * inside a shell (e.g. terminal, floaterm)
+   * Defaults to 'floaterm'
    */
-  type: 'shell' | 'process';
+   type: string;
 
   /**
-   * The command to execute. If the type is "shell" it should be the full
+   * The command to execute.
    * command line including any additional arguments passed to the command.
+   * Defaults to ''
    */
   command: string;
 
   /**
    * Whether the executed command is kept alive and runs in the background.
+   * Defaults to false
    */
   isBackground?: boolean;
 
   /**
-   * Additional arguments passed to the command. Should be used if type
-   * is "process".
+   * Additional arguments passed to the command.
+   * Defaults to []
    */
   args?: string[];
-
-  /**
-   * Defines the group to which this task belongs. Also supports to mark
-   * a task as the default task in a group.
-   */
-  group?: 'build' | 'test' | { kind: 'build' | 'test'; isDefault: boolean };
 
   /**
    * The presentation options.
    */
   presentation?: PresentationOptions;
-
-  /**
-   * The problem matcher(s) to use to capture problems in the tasks
-   * output.
-   */
-  problemMatcher?: string | ProblemMatcher | (string | ProblemMatcher)[];
-
-  /**
-   * Defines when and how a task is run.
-   */
-  runOptions?: RunOptions;
 }
 
 interface PresentationOptions {
@@ -209,12 +169,6 @@ interface PresentationOptions {
   reveal?: 'never' | 'silent' | 'always';
 
   /**
-   * Controls whether the command associated with the task is echoed
-   * in the user interface.
-   */
-  echo?: boolean;
-
-  /**
    * Controls whether the panel showing the task output is taking focus.
    */
   focus?: boolean;
@@ -222,198 +176,122 @@ interface PresentationOptions {
   /**
    * Controls if the task panel is used for this task only (dedicated),
    * shared between tasks (shared) or if a new panel is created on
-   * every task execution (new). Defaults to `shared`
+   * every task execution (new). Defaults to `new`
+   * note: 'dedicated' not supported now
    */
   panel?: 'shared' | 'dedicated' | 'new';
 }
+```
 
-/**
- * A description of a problem matcher that detects problems
- * in build output.
- */
-interface ProblemMatcher {
-  /**
-   * The name of a base problem matcher to use. If specified the
-   * base problem matcher will be used as a template and properties
-   * specified here will replace properties of the base problem
-   * matcher
-   */
-  base?: string;
+#### floaterm
 
-  /**
-   * The owner of the produced VS Code problem. This is typically
-   * the identifier of a VS Code language service if the problems are
-   * to be merged with the one produced by the language service
-   * or 'external'. Defaults to 'external' if omitted.
-   */
-  owner?: string;
+If you want to use floaterm's options you can put it's options to json's options.If you don't set floaterm's options, when you start a task, it's settins depend on [floaterm's options][7]
 
-  /**
-   * The severity of the VS Code problem produced by this problem matcher.
-   *
-   * Valid values are:
-   *   "error": to produce errors.
-   *   "warning": to produce warnings.
-   *   "info": to produce infos.
-   *
-   * The value is used if a pattern doesn't specify a severity match group.
-   * Defaults to "error" if omitted.
-   */
-  severity?: string;
+For example:
 
-  /**
-   * Defines how filename reported in a problem pattern
-   * should be read. Valid values are:
-   *  - "absolute": the filename is always treated absolute.
-   *  - "relative": the filename is always treated relative to
-   *    the current working directory. This is the default.
-   *  - ["relative", "path value"]: the filename is always
-   *    treated relative to the given path value.
-   *  - "autodetect": the filename is treated relative to
-   *    the current workspace directory, and if the file
-   *    does not exist, it is treated as absolute.
-   *  - ["autodetect", "path value"]: the filename is treated
-   *    relative to the given path value, and if it does not
-   *    exist, it is treated as absolute.
-   */
-  fileLocation?: string | string[];
-
-  /**
-   * The name of a predefined problem pattern, the inline definition
-   * of a problem pattern or an array of problem patterns to match
-   * problems spread over multiple lines.
-   */
-  pattern?: string | ProblemPattern | ProblemPattern[];
-
-  /**
-   * Additional information used to detect when a background task (like a watching task in Gulp)
-   * is active.
-   */
-  background?: BackgroundMatcher;
-}
-
-/**
- * A description to track the start and end of a background task.
- */
-interface BackgroundMatcher {
-  /**
-   * If set to true the watcher is in active mode when the task
-   * starts. This is equals of issuing a line that matches the
-   * beginPattern.
-   */
-  activeOnStart?: boolean;
-
-  /**
-   * If matched in the output the start of a background task is signaled.
-   */
-  beginsPattern?: string;
-
-  /**
-   * If matched in the output the end of a background task is signaled.
-   */
-  endsPattern?: string;
-}
-
-interface ProblemPattern {
-  /**
-   * The regular expression to find a problem in the console output of an
-   * executed task.
-   */
-  regexp: string;
-
-  /**
-   * Whether the pattern matches a problem for the whole file or for a location
-   * inside a file.
-   *
-   * Defaults to "location".
-   */
-  kind?: 'file' | 'location';
-
-  /**
-   * The match group index of the filename.
-   */
-  file: number;
-
-  /**
-   * The match group index of the problem's location. Valid location
-   * patterns are: (line), (line,column) and (startLine,startColumn,endLine,endColumn).
-   * If omitted the line and column properties are used.
-   */
-  location?: number;
-
-  /**
-   * The match group index of the problem's line in the source file.
-   * Can only be omitted if location is specified.
-   */
-  line?: number;
-
-  /**
-   * The match group index of the problem's column in the source file.
-   */
-  column?: number;
-
-  /**
-   * The match group index of the problem's end line in the source file.
-   *
-   * Defaults to undefined. No end line is captured.
-   */
-  endLine?: number;
-
-  /**
-   * The match group index of the problem's end column in the source file.
-   *
-   * Defaults to undefined. No end column is captured.
-   */
-  endColumn?: number;
-
-  /**
-   * The match group index of the problem's severity.
-   *
-   * Defaults to undefined. In this case the problem matcher's severity
-   * is used.
-   */
-  severity?: number;
-
-  /**
-   * The match group index of the problem's code.
-   *
-   * Defaults to undefined. No code is captured.
-   */
-  code?: number;
-
-  /**
-   * The match group index of the message. Defaults to 0.
-   */
-  message: number;
-
-  /**
-   * Specifies if the last pattern in a multi line problem matcher should
-   * loop as long as it does match a line consequently. Only valid on the
-   * last problem pattern in a multi line problem matcher.
-   */
-  loop?: boolean;
-}
-
-/**
- * A description to when and how run a task.
- */
-interface RunOptions {
-  /**
-   * Controls how variables are evaluated when a task is executed through
-   * the Rerun Last Task command.
-   * The default is `true`, meaning that variables will be re-evaluated when
-   * a task is rerun. When set to `false`, the resolved variable values from
-   * the previous run of the task will be used.
-   */
-  reevaluateOnRerun?: boolean;
-
-  /**
-   * Specifies when a task is run.
-   *
-   * Valid values are:
-   *   "default": The task will only be run when executed through the Run Task command.
-   *   "folderOpen": The task will be run when the containing folder is opened.
-   */
-  runOn?: string;
+```jsonc
+{
+  "type": "floaterm",
+  "command": "python3",
+  "args": ["${file}"],
+  "options": {
+    "cwd": "${workspaceFolder}",
+    "autoclose": 0,
+    "wintype": "float",
+    "name": "123",
+    "silent": 0,
+    "width": 0.5,
+    "height": 0.5,
+    "title": "test",
+    "position": "center"
+  },
+  // if you omit `options['silent']`, `isBackground` will decide whether silent
+  "isBackground": false,
+  "presentation": {
+    // when `panel='shared'`, it will reuse floaterm's windows next
+    "panel": "shared"
+  }
 }
 ```
+
+**Command:**
+
+If `panel != 'shared'`
+
+```vim
+:Tasksystem[!] taskname
+```
+
+It will start by `:FloatermNew[!]`
+
+### Examples
+
+`tasks.json`
+
+```jsonc
+{
+  "version": "1.0.0",
+  // This `isBackground` is a global option
+  "isBackground": false,
+  "tasks": [
+    {
+      "label": "run",
+      "type": "floaterm",
+      "isBackground": false,
+      "presentation": {
+          "shared": "new"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "name": "123",
+        "width": 0.5,
+        "height": 0.5,
+        "title": "test",
+        "silent": 0,
+        "wintype": "float",
+        "position": "center",
+        "autoclose": 0
+      },
+      "filetype": {
+        "python": {
+          "command": "python3",
+          "args": ["${file}"],
+          "options": {
+            "cwd": "${workspaceFolder}"
+          }
+        },
+        "cpp": {
+          "command": "./a.out",
+          "args": [],
+          "options": {
+            "cwd": "${workspaceFolder}"
+          }
+        }
+      }
+    }
+  ]
+}
+```
+
+**Note:**
+
+If you set `filetype` in your single `task`, you can override these parameters: `command`,`args`,`options`.And this task only works filetypes list in `filetype`
+
+## Reference
+
+[skywind3000/asynctasks.vim][8]
+
+[voldikss/vim-floaterm][2]
+
+## License
+
+MIT
+
+[1]: ./GIF1.gif
+[2]: https://github.com/voldikss/vim-floaterm
+[3]: https://github.com/Yggdroot/LeaderF
+[4]: https://github.com/junegunn/vim-plug
+[5]: https://code.visualstudio.com/docs/editor/tasks
+[6]: https://code.visualstudio.com/docs/editor/tasks-appendix
+[7]: https://github.com/voldikss/vim-floaterm#options
+[8]: https://github.com/skywind3000/asynctasks.vim

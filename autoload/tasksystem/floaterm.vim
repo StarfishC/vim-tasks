@@ -43,10 +43,6 @@ function! s:floaterm_params(opts) abort
     if has_key(a:opts.options, 'autoclose')
         let params.autoclose = a:opts.options.autoclose
     endif
-    let params.cmd = a:opts.command
-    for cmd in a:opts.args
-        let params.cmd .= ' ' . cmd
-    endfor
     return params
 endfunction
 
@@ -58,7 +54,7 @@ function! s:floaterm_run(bang, opts) abort
     endif
     let params = s:floaterm_params(a:opts)
     for key in keys(params)
-        let cmd .= ' --' . key . '=' . params[key]
+        let cmd .= ' --' . key . '=' . (type(params[key]) == v:t_float ? string(params[key]) : params[key]) 
     endfor
     let cmdline = a:opts.command
     for arg in a:opts.args
@@ -66,7 +62,7 @@ function! s:floaterm_run(bang, opts) abort
     endfor
     let cmd .= ' ' . cmdline
     exec cmd
-    if get(a:opts, 'focus', 1) == 0
+    if get(a:opts.presentation, 'focus', 1) == 0
         stopinsert | noa wincmd p
         augroup close-floaterm-runner
             autocmd!

@@ -1,8 +1,6 @@
 # Tasksystem
 
-An asynchronous task system like vscode on neovim
-
-> can't support vim now, beacause of the function(`json_decode`) in vim
+An asynchronous task system like vscode on **(Neo)Vim**
 
 ![Sceenshot][1]
 

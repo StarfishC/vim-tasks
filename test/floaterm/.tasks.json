@@ -8,7 +8,7 @@
       "type": "floaterm",
       "isBackground": false,
       "presentation": {
-          "shared": "new"
+          "panel": "shared"
       },
       "options": {
         "cwd": "${workspaceFolder}",
@@ -18,8 +18,7 @@
         "title": "test",
         "silent": 0,
         "wintype": "float",
-        "position": "center",
-        "autoclose": 0
+        "position": "bottomright"
       },
       "filetype": {
         "python": {

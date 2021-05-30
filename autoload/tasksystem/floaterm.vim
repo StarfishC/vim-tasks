@@ -85,7 +85,7 @@ function! s:floaterm_run_reuse(bang, opts) abort
     let params = s:floaterm_params(a:opts)
     let curr_bufnr = floaterm#buflist#curr()
     if curr_bufnr == -1
-        let curr_bufnr = floaterm#new(a:bang, 'ls', {}, params)
+        let curr_bufnr = floaterm#new(a:bang, '', {}, params)
     else
         call floaterm#terminal#open_existing(curr_bufnr)
     endif
@@ -98,7 +98,6 @@ function! s:floaterm_run_reuse(bang, opts) abort
         let cmdline .= ' ' . arg
     endfor
     call floaterm#terminal#send(curr_bufnr, [cmd])
-    call floaterm#terminal#send(curr_bufnr, ["clear"])
     call floaterm#terminal#send(curr_bufnr, [cmdline])
     stopinsert
     if &filetype == 'floaterm' && g:floaterm_autoinsert

@@ -54,7 +54,7 @@ function! s:floaterm_run(bang, opts) abort
     endif
     let params = s:floaterm_params(a:opts)
     for key in keys(params)
-        let cmd .= ' --' . key . '=' . (type(params[key]) == v:t_float ? string(params[key]) : params[key]) 
+        let cmd .= ' --' . key . '=' . (type(params[key]) == v:t_float ? string(params[key]) : params[key])
     endfor
     let cmdline = a:opts.command
     for arg in a:opts.args

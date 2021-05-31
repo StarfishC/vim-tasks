@@ -7,7 +7,7 @@ An asynchronous task system like vscode on **(Neo)Vim**
 ## Features
 
 - [x] support [vim-floaterm][2]
-- [ ] support sequent tasks
+- [x] support sequent tasks
 - [ ] support terminal
 - [ ] support quickfix
 - [ ] list in [LeaderF][3]
@@ -157,6 +157,18 @@ interface TaskDescription {
    * The presentation options.
    */
   presentation?: PresentationOptions;
+
+  /**
+   * Compose tasks out of simpler tasks
+   * Defaults to []
+   */
+   dependsOn?: string[];
+
+   /**
+    * Execute 'dependsOn' mode
+    * Defaults to 'parallel', 'sequence' is available
+    */
+    dependsOrder?: string;
 }
 
 interface PresentationOptions {

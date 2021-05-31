@@ -7,7 +7,7 @@
 " LICENSE:        MIT
 " ============================================================================
 
-function! tasksystem#start(bang, params)
+function! s:start_task(bang, params)
     let type = get(a:params, 'type', 'floaterm')
     if type == 'floaterm'
         call tasksystem#floaterm#run(a:bang, a:params)
@@ -36,23 +36,26 @@ function! tasksystem#run(bang, label) abort
     endif
     if has_key(taskinfo, label)
         let params = taskinfo[label]
-        if has_key(params, 'dependsOn')
-            for name in params.dependsOn
-                if has_key(ftinfo, &filetype) && index(ftinfo[&filetype], name) != -1
-                    let name = name . "::" . &filetype
+        for name in params.dependsOn
+            if has_key(ftinfo, &filetype) && index(ftinfo[&filetype], name) != -1
+                let name = name . "::" . &filetype
+            endif
+            if has_key(taskinfo, name)
+                let taskopts = taskinfo[name]
+                if params.dependsOrder == 'sequence'
+                    let taskopts.presentation.panel = 'shared'
                 endif
-                if has_key(taskinfo, name)
-                    let taskopts = taskinfo[name]
-                    call tasksystem#start(a:bang, taskopts)
-                else
-                    call tasksystem#utils#errmsg("'dependsOn' task " . name . ' not exist')
-                endif
-            endfor
+                call s:start_task(a:bang, taskopts)
+            else
+                call tasksystem#utils#errmsg("'dependsOn' task " . name . ' not exist')
+            endif
+        endfor
+        if params.command != ''
+            call s:start_task(a:label, params)
         endif
-        call tasksystem#start(a:label, params)
     else
         call tasksystem#utils#errmsg(a:label . " task not exist!")
     endif
 endfunction
 
-" call tasksystem#run(1, 'One')
+call tasksystem#run(1, 'One')

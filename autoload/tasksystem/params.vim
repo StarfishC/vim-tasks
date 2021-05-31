@@ -101,6 +101,8 @@ function! s:schema_params(opts, rep) abort
     let params.presentation.echo = get(a:opts.presentation, 'echo', get(get(a:rep, 'presentation', presentation), 'echo', v:false))
     let params.presentation.focus = get(a:opts.presentation, 'focus', get(get(a:rep, 'presentation', presentation), 'focus', v:true))
     let params.presentation.panel = get(a:opts.presentation, 'panel', get(get(a:rep, 'presentation', presentation), 'panel', "new"))
+    let params.dependsOn = get(a:opts, 'dependsOn', get(a:rep, "dependsOn", []))
+    let params.dependsOrder = get(a:opts, 'dependsOrder', get(a:rep, 'dependsOrder', 'parallel'))
     " let params.tasks = get(a:opts, 'tasks', get(a:rep, "tasks", []))
     if a:rep == {}
         let params.tasks = get(a:opts, 'tasks', [])

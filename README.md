@@ -164,9 +164,15 @@ interface TaskDescription {
    */
    dependsOn?: string[];
 
+  /**
+   * Tasks's executed order
+   * Defaults to 'positive', 'reverse' is available
+   */
+   dependsType?: string;
+
    /**
     * Execute 'dependsOn' mode
-    * Defaults to 'parallel', 'sequence' is available
+    * Defaults to 'parallel', 'sequent' , 'continuous' are available
     */
     dependsOrder?: string;
 }
@@ -187,7 +193,6 @@ interface PresentationOptions {
    * Controls if the task panel is used for this task only (dedicated),
    * shared between tasks (shared) or if a new panel is created on
    * every task execution (new). Defaults to `new`
-   * note: 'dedicated' not supported now
    */
   panel?: 'shared' | 'dedicated' | 'new';
 }
@@ -285,7 +290,7 @@ It will start by `:FloatermNew[!]`
 
 **Note:**
 
-If you set `filetype` in your single `task`, you can override these parameters: `command`,`args`,`options`.And this task only works filetypes list in `filetype`
+If you set `filetype` in your single `task`, you can override these parameters: `command`,`args`,`options`,`type`.And this task only works filetypes list in `filetype`
 
 ## Reference
 

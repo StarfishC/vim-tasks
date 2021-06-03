@@ -11,9 +11,7 @@
 function! s:floaterm_params(opts) abort
     let params = {}
     let params.cwd = fnameescape(a:opts.options.cwd)
-    if has_key(a:opts.options, 'name')
-        let params.name = fnameescape(a:opts.options.name)
-    endif
+    let params.name = fnameescape(get(a:opts.options, 'name', '') != '' ? a:opts.options.name : a:opts.label)
     if has_key(a:opts.options, 'width')
         let params.width = a:opts.options.width
     endif
@@ -46,7 +44,7 @@ function! s:floaterm_params(opts) abort
     return params
 endfunction
 
-function! s:floaterm_run(bang, opts) abort
+function! s:floaterm_run_new(bang, opts) abort
     if a:bang
         let cmd = 'FloatermNew!'
     else
@@ -81,9 +79,13 @@ function! s:floaterm_close() abort
     endfor
 endfunction
 
-function! s:floaterm_run_reuse(bang, opts) abort
+function! s:floaterm_run_op(bang, opts, panel) abort
     let params = s:floaterm_params(a:opts)
-    let curr_bufnr = floaterm#buflist#curr()
+    if a:panel == 'dedicated'
+        let bufnr = floaterm#terminal#get_bufnr(a:opts.name)
+    elseif a:panel == 'shared'
+        let curr_bufnr = floaterm#buflist#curr()
+    endif
     if curr_bufnr == -1
         let curr_bufnr = floaterm#new(a:bang, '', {}, params)
     else
@@ -111,10 +113,12 @@ function! tasksystem#floaterm#run(bang, opts) abort
     if exists(':FloatermNew') != 2
         return tasksystem#utils#errmsg("require voldikss/vim-floatem")
     endif
-    if get(a:opts.presentation, 'panel', 'new') != 'new'
-        call s:floaterm_run_reuse(v:true, a:opts)
+    if a:opts.presentation.panel == 'new'
+        call s:floaterm_run_new(a:bang, a:opts)
+    elseif a:opts.presentation.panel == 'shared'
+        call s:floaterm_run_op(v:true, a:opts, 'shared')
     else
-        call s:floaterm_run(a:bang, a:opts)
+        call s:floaterm_run_op(a:bang, a:opts, 'dedicated')
     endif
 endfunction
 

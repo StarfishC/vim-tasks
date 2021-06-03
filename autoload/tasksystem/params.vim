@@ -102,6 +102,7 @@ function! s:schema_params(opts, rep) abort
     let params.presentation.focus = get(a:opts.presentation, 'focus', get(get(a:rep, 'presentation', presentation), 'focus', v:true))
     let params.presentation.panel = get(a:opts.presentation, 'panel', get(get(a:rep, 'presentation', presentation), 'panel', "new"))
     let params.dependsOn = get(a:opts, 'dependsOn', get(a:rep, "dependsOn", []))
+    let params.dependsType = get(a:opts, 'dependsType', get(a:rep, 'dependsType', 'positive'))
     let params.dependsOrder = get(a:opts, 'dependsOrder', get(a:rep, 'dependsOrder', 'parallel'))
     " let params.tasks = get(a:opts, 'tasks', get(a:rep, "tasks", []))
     if a:rep == {}
@@ -121,7 +122,7 @@ function! s:transfer_vars(str) abort
     let tmp = a:str
     while v:true
         let substr = matchstr(tmp, subpattern)
-        let keystr = matchstr(tmp, keypattern)
+        let keystr = matchstr(substr, keypattern)
         if has_key(macros, keystr)
             let tmp = substitute(tmp, substr, macros[keystr], 'g')
         else
@@ -141,7 +142,7 @@ function! s:process_params(name, opts) abort
         if get(task, 'label', '') == ''
             call tasksystem#utils#errmsg('task miss "label"')
         endif
-        if get(s:namecompleteopts, task.label)
+        if index(s:namecompleteopts, task.label) != -1
             let task.label = task.label . "::" . a:name
         endif
         call add(s:namecompleteopts, task.label)

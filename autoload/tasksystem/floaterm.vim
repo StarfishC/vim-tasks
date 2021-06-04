@@ -88,11 +88,11 @@ function! s:floaterm_run_op(bang, opts, panel) abort
     endif
     if curr_bufnr == -1
         let curr_bufnr = floaterm#new(a:bang, '', {}, params)
-    else
-        call floaterm#terminal#open_existing(curr_bufnr)
     endif
     if get(params, 'silent', 0) == 1
         FloatermHide!
+    else
+        execute curr_bufnr . 'FloatermShow'
     endif
     let cmd = 'cd ' . shellescape(params.cwd)
     let cmdline = a:opts.command
@@ -118,7 +118,7 @@ function! tasksystem#floaterm#run(bang, opts) abort
     elseif a:opts.presentation.panel == 'shared'
         call s:floaterm_run_op(v:true, a:opts, 'shared')
     else
-        call s:floaterm_run_op(a:bang, a:opts, 'dedicated')
+        call s:floaterm_run_op(v:true, a:opts, 'dedicated')
     endif
 endfunction
 

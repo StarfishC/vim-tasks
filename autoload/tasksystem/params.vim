@@ -35,28 +35,28 @@ if has("win32") || has("win64")
 else
     let s:is_windows = 0
 endif
-let s:namecompleteopts = []     " Tasksystem complete
-let s:tasksinfo = {}            " all tasks
-let s:filetypetaskinfo = {}     " task for specific filetype
+let s:tasks_complete_list = []      " Tasksystem complete
+let s:tasks_info = {}               " all tasks
+let s:tasks_filetype = {}           " task for specific filetype
+let s:file_modify_time = {"local": 0, "global": 0}  " last modification time of tasks.json
 
 
 " read json file
 function! s:json_decode(filename) abort
-    let l:filename = expand(a:filename)
-    if filereadable(l:filename) == 0
+    if filereadable(a:filename) == 0
         return {}
     endif
-    let l:contents = readfile(l:filename)
+    let contents = readfile(a:filename)
     let pattern1 = '\s*[^(".*"\s+,)][\s]*\/\/.*'    "match comments
-    for i in range(len(l:contents))
-        if l:contents[i] =~ pattern1
-            let l:contents[i] = substitute(l:contents[i], pattern1, '', '')
+    for i in range(len(contents))
+        if contents[i] =~ pattern1
+            let contents[i] = substitute(contents[i], pattern1, '', '')
         endif
     endfor
     if !has("nvim")
-        let l:contents = join(l:contents, '')
+        let contents = join(contents, '')
     endif
-    return json_decode(l:contents)
+    return json_decode(contents)
 endfunction
 
 " predefinedvars like vscode
@@ -142,10 +142,10 @@ function! s:process_params(name, opts) abort
         if get(task, 'label', '') == ''
             call tasksystem#utils#errmsg('task miss "label"')
         endif
-        if index(s:namecompleteopts, task.label) != -1
+        if index(s:tasks_complete_list, task.label) != -1
             let task.label = task.label . "::" . a:name
         endif
-        call add(s:namecompleteopts, task.label)
+        call add(s:tasks_complete_list, task.label)
         " complete task's params
         let task = s:schema_params(task, defaultparams)
         " repalce predefinedvars
@@ -158,13 +158,13 @@ function! s:process_params(name, opts) abort
         endfor
         let task.filetype = get(task, 'filetype', {})
         if task.filetype == {}
-            if has_key(s:filetypetaskinfo, "*")
-                call add(s:filetypetaskinfo["*"], task.label)
+            if has_key(s:tasks_filetype, "*")
+                call add(s:tasks_filetype["*"], task.label)
             else
-                let s:filetypetaskinfo["*"] = []
-                call add(s:filetypetaskinfo["*"], task.label)
+                let s:tasks_filetype["*"] = []
+                call add(s:tasks_filetype["*"], task.label)
             endif
-            let s:tasksinfo[task.label] = task
+            let s:tasks_info[task.label] = task
         endif
         for key in keys(task.filetype)
             let ft = task.filetype[key]
@@ -182,42 +182,44 @@ function! s:process_params(name, opts) abort
                 let ft.options[tmp] = s:transfer_vars(ft.options[tmp])
             endfor
             let ft.label = task.label . "::" . key
-            " add label-opts to s:filetypetaskinfo
-            if has_key(s:filetypetaskinfo, key)
-                call add(s:filetypetaskinfo[key], task.label)
+            " add label-opts to s:tasks_filetype
+            if has_key(s:tasks_filetype, key)
+                call add(s:tasks_filetype[key], task.label)
             else
-                let s:filetypetaskinfo[key] = []
-                call add(s:filetypetaskinfo[key], task.label)
+                let s:tasks_filetype[key] = []
+                call add(s:tasks_filetype[key], task.label)
             endif
-            let s:tasksinfo[ft.label] = ft
+            let s:tasks_info[ft.label] = ft
         endfor
     endfor
 endfunction
 
 
-function! tasksystem#params#namelist() abort
+function! tasksystem#params#completelist() abort
     call tasksystem#params#taskinfo()
     let item = []
-    if has_key(s:filetypetaskinfo, &filetype)
-        let item = s:filetypetaskinfo[&filetype]
+    if has_key(s:tasks_filetype, &filetype)
+        let item = copy(s:tasks_filetype[&filetype])
     endif
-    call extend(item, s:filetypetaskinfo['*'])
+    call extend(item, s:tasks_filetype['*'])
     return item
 endfunction
 
-function! tasksystem#params#fttaskinfo() abort
-    return s:filetypetaskinfo
+function! tasksystem#params#filetypetask() abort
+    return s:tasks_filetype
 endfunction
 
 function! tasksystem#params#taskinfo() abort
-    let s:namecompleteopts = []
-    let s:filetypetaskinfo = {}
-    let s:tasksinfo = {}
-    let ret = {'global': s:default_global_path . '/' . s:global_json_name,
-             \ 'local': s:default_local_path . '/' . s:local_json_name}
-    for task in keys(ret)
-        call s:process_params(task, s:json_decode(ret[task]))
+    let files = {'global': expand(s:default_global_path . '/' . s:global_json_name),
+             \ 'local' : expand(s:default_local_path . '/' . s:local_json_name)}
+    for file in keys(files)
+        let lasttime = getftime(files[file])
+        if lasttime != -1 && lasttime > s:file_modify_time[file]
+            let s:file_modify_time[file] = lasttime
+            call s:process_params(file, s:json_decode(files[file]))
+        endif
     endfor
-    return s:tasksinfo
+    return s:tasks_info
 endfunction
 
+" echo tasksystem#params#taskinfo()

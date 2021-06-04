@@ -21,21 +21,21 @@ function! s:start_task(bang, params)
 endfunction
 
 function! tasksystem#complete(ArgLead, CmdLine, CursorPos) abort
-	let template = tasksystem#params#namelist()
+	let template = tasksystem#params#completelist()
 	let candidate = []
 	for key in template
-		if key != ''
-			if stridx(key, a:ArgLead) == 0
-				let candidate += [key]
-			endif
-		endif
+        if key != ''
+            if stridx(key, a:ArgLead) == 0
+                let candidate += [key]
+            endif
+        endif
 	endfor
 	return candidate
 endfunction
 
 function! tasksystem#run(bang, label) abort
     let taskinfo = tasksystem#params#taskinfo()
-    let ftinfo = tasksystem#params#fttaskinfo()
+    let ftinfo = tasksystem#params#filetypetask()
     let label = a:label
     if has_key(ftinfo, &filetype) && index(ftinfo[&filetype], a:label) != -1
         let label = a:label . "::" . &filetype
@@ -94,3 +94,4 @@ function! tasksystem#run(bang, label) abort
 endfunction
 
 " call tasksystem#run(0, 'One')
+" call tasksystem#params#namelist()

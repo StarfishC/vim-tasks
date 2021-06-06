@@ -165,14 +165,16 @@ interface TaskDescription {
    dependsOn?: string[];
 
   /**
-   * Tasks's executed order
-   * Defaults to 'positive', 'reverse' is available
+   * The task executed order
+   * 'preLaunch' and 'postLaunch' are available
+   * If you set 'preLaunch', the task will be executed after `dependsOn`, 'postLaunch' is before `dependsOn`
+   * Defaults to 'preLaunch' 
    */
    dependsType?: string;
 
    /**
     * Execute 'dependsOn' mode
-    * Defaults to 'parallel', 'sequent' , 'continuous' are available
+    * Defaults to 'parallel', 'sequent', 'continuous' are available
     */
     dependsOrder?: string;
 }

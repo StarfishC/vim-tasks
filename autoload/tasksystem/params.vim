@@ -101,12 +101,18 @@ function! s:schema_params(opts, rep) abort
     let params.presentation.echo = get(a:opts.presentation, 'echo', get(get(a:rep, 'presentation', presentation), 'echo', v:false))
     let params.presentation.focus = get(a:opts.presentation, 'focus', get(get(a:rep, 'presentation', presentation), 'focus', v:true))
     let params.presentation.panel = get(a:opts.presentation, 'panel', get(get(a:rep, 'presentation', presentation), 'panel', "new"))
-    let params.dependsOn = get(a:opts, 'dependsOn', get(a:rep, "dependsOn", []))
-    let params.dependsType = get(a:opts, 'dependsType', get(a:rep, 'dependsType', 'positive'))
-    let params.dependsOrder = get(a:opts, 'dependsOrder', get(a:rep, 'dependsOrder', 'parallel'))
     " let params.tasks = get(a:opts, 'tasks', get(a:rep, "tasks", []))
     if a:rep == {}
         let params.tasks = get(a:opts, 'tasks', [])
+    else
+        let params.dependsType = get(a:opts, 'dependsType', 'preLaunch')
+        let params.dependsOn = get(a:opts, 'dependsOn', [])
+        let params.dependsOrder = get(a:opts, 'dependsOrder', 'parallel')
+        if params.dependsType == 'postLaunch'
+            call insert(params.dependsOn, params.label)
+        else
+            call add(params.dependsOn, params.label)
+        endif
     endif
     return params
 endfunction
@@ -132,7 +138,6 @@ function! s:transfer_vars(str) abort
     return tmp
 endfunction
 
-" like vscode, predefinedvars only supports 'command', 'args', 'options', 'filetype'
 function! s:process_params(name, opts) abort
     if a:opts == {}
         return
@@ -148,14 +153,6 @@ function! s:process_params(name, opts) abort
         call add(s:tasks_complete_list, task.label)
         " complete task's params
         let task = s:schema_params(task, defaultparams)
-        " repalce predefinedvars
-        let task.command = s:transfer_vars(task.command)
-        for i in range(len(task.args))
-            let task.args[i] = s:transfer_vars(task.args[i])
-        endfor
-        for key in keys(task.options)
-            let task.options[key] = s:transfer_vars(task.options[key])
-        endfor
         let task.filetype = get(task, 'filetype', {})
         if task.filetype == {}
             if has_key(s:tasks_filetype, "*")
@@ -168,20 +165,13 @@ function! s:process_params(name, opts) abort
         endif
         for key in keys(task.filetype)
             let ft = task.filetype[key]
+            let ft.label = task.label . "::" . key
             let ft = s:schema_params(ft, task)
             for k in keys(task.options)
                 if !has_key(ft.options, k)
                     let ft.options[k] = task.options[k]
                 endif
             endfor
-            let ft.command = s:transfer_vars(ft.command)
-            for i in range(len(ft.args))
-                let ft.args[i] = s:transfer_vars(ft.args[i])
-            endfor
-            for tmp in keys(ft.options)
-                let ft.options[tmp] = s:transfer_vars(ft.options[tmp])
-            endfor
-            let ft.label = task.label . "::" . key
             " add label-opts to s:tasks_filetype
             if has_key(s:tasks_filetype, key)
                 call add(s:tasks_filetype[key], task.label)
@@ -194,6 +184,23 @@ function! s:process_params(name, opts) abort
     endfor
 endfunction
 
+
+" like vscode, predefinedvars only supports 'command', 'args', 'options', 'filetype'
+function! tasksystem#params#replacemacros(task) abort
+    if a:task == {}
+        return
+    endif
+    let task = deepcopy(a:task)
+    " repalce predefinedvars
+    let task.command = s:transfer_vars(task.command)
+    for i in range(len(task.args))
+        let task.args[i] = s:transfer_vars(task.args[i])
+    endfor
+    for key in keys(task.options)
+        let task.options[key] = s:transfer_vars(task.options[key])
+    endfor
+    return task
+endfunction
 
 function! tasksystem#params#completelist() abort
     call tasksystem#params#taskinfo()
@@ -222,4 +229,3 @@ function! tasksystem#params#taskinfo() abort
     return s:tasks_info
 endfunction
 
-" echo tasksystem#params#taskinfo()

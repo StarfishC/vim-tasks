@@ -41,27 +41,22 @@ function! tasksystem#run(bang, label) abort
         let label = a:label . "::" . &filetype
     endif
     if has_key(taskinfo, label)
-        let params = taskinfo[label]
+        let params = tasksystem#params#replacemacros(taskinfo[label])
         let cmd = ''
-        let reverse = v:false
-        if params.dependsType == 'reverse'
-            let reverse = v:true
-            if params.dependsOrder == 'sequent'
-                call s:start_task(a:bang, params)
-            endif
+        if len(params.dependsOn) == 1
+            call s:start_task(a:label, params)
+            return
         endif
         for name in params.dependsOn
             if has_key(ftinfo, &filetype) && index(ftinfo[&filetype], name) != -1
                 let name = name . "::" . &filetype
             endif
             if has_key(taskinfo, name)
-                let taskopts = taskinfo[name]
+                let taskopts = tasksystem#params#replacemacros(taskinfo[name])
                 if params.dependsOrder == 'parallel'
                     let taskopts.presentation.panel = 'new'
-                    call s:start_task(a:bang, taskopts)
                 elseif params.dependsOrder == 'sequent'
                     let taskopts.presentation.panel = 'shared'
-                    call s:start_task(a:bang, taskopts)
                 else
                     let cmd .= taskopts.command
                     for arg in taskopts.args
@@ -70,22 +65,14 @@ function! tasksystem#run(bang, label) abort
                     let cmd .= ';'
                     continue
                 endif
+                call s:start_task(a:bang, taskopts)
             else
                 call tasksystem#utils#errmsg("'dependsOn' task " . name . ' not exist')
             endif
         endfor
-        if params.dependsOrder == 'continuous'
-            if !reverse
-                let params.command = cmd . params.command
-            else
-                for arg in params.args
-                    let params.command .= ' ' . arg
-                endfor
-                let params.args = []
-                let params.command = params.command . ';' . cmd
-            endif
-        endif
-        if params.command != '' && params.dependsType != 'reverse'
+        if params.dependsOrder == 'continuous' && cmd != ''
+            let params.command = cmd
+            let params.args = []
             call s:start_task(a:label, params)
         endif
     else
@@ -93,5 +80,3 @@ function! tasksystem#run(bang, label) abort
     endif
 endfunction
 
-" call tasksystem#run(0, 'One')
-" call tasksystem#params#namelist()

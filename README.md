@@ -247,46 +247,86 @@ It will start by `:FloatermNew[!]`
 
 ```jsonc
 {
-  "version": "1.0.0",
-  // This `isBackground` is a global option
-  "isBackground": false,
-  "tasks": [
-    {
-      "label": "run",
-      "type": "floaterm",
-      "isBackground": false,
-      "presentation": {
-          "shared": "new"
-      },
-      "options": {
-        "cwd": "${workspaceFolder}",
-        "name": "123",
-        "width": 0.5,
-        "height": 0.5,
-        "title": "test",
-        "silent": 0,
-        "wintype": "float",
-        "position": "center",
-        "autoclose": 0
-      },
-      "filetype": {
-        "python": {
-          "command": "python3",
-          "args": ["${file}"],
-          "options": {
-            "cwd": "${workspaceFolder}"
-          }
+    "version": "1.0.0",
+    "type": "floaterm",
+    "options": {
+        "cwd": "${fileWorkspaceFolder}"
+    },
+    "presentation": {
+        "panel": "shared"
+    },
+    "tasks": [
+        {
+            "label": "quick-run",
+            "type": "floaterm",
+            "options": {
+                "position": "bottomright",
+                "autoclose": 0
+            },
+            "presentation": {
+                "focus": 0,
+                "panel": "shared"
+            },
+            "filetype": {
+                "python": {
+                    "command": "python3",
+                    "args": ["${file}"]
+                },
+                "cpp": {
+                    "command": "clang++",
+                    "args": [
+                        "${file}",
+                        "-std=c++11",
+                        "-o",
+                        "${fileWorkspaceFolder}${pathSeparator}a.out"
+                    ],
+                    "dependsOn": ["execute"],
+                    "dependsType": "postLaunch",
+                    "dependsOrder": "sequent"
+                },
+                "vim": {
+                    "command": "so ${file}",
+                    "type": "vim"
+                },
+                "markdown": {
+                    "command": "MarkdownPreviewToggle",
+                    "type": "vim"
+                }
+            }
         },
-        "cpp": {
-          "command": "./a.out",
-          "args": [],
-          "options": {
-            "cwd": "${workspaceFolder}"
-          }
+        {
+            "label": "execute",
+            "command": "time",
+            "args": [
+                "${fileWorkspaceFolder}${pathSeparator}a.out"
+            ]
+        },
+        {
+            "label": "project-build",
+            "command": "rm build -r;mkdir build && cd build && cmake",
+            "args": [
+                "-DECMAKE_EXPORT_COMPILE_COMMANDS=1",
+                ".."
+            ]
+        },
+        {
+            "label": "project-cmake",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "build"
+            ]
+        },
+        {
+            "label": "project-run",
+            "command": "build${pathSeparator}${workspaceFolderBasename}"
+        },
+        {
+            "label": "project",
+            "dependsOrder": "sequent",
+            "dependsOn": ["project-build", "project-cmake", "project-run"]
         }
-      }
-    }
-  ]
+    ]
 }
 ```
 

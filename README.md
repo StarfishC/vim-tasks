@@ -52,6 +52,7 @@ Predefinedvars like vscode
 | ${fileDirname} | the current opened file's dirname |
 | ${fileExtname} | the current opened file's extension |
 | ${lineNumber} | the current selected line number in the active file |
+| ${cword} | the word under the cursor |
 | ${selectedText} (can't support now)| the current selected text in the active file |
 | ${cwd} (can't support now)| the task runner's current working directory on startup |
 

@@ -84,6 +84,12 @@ interface BaseTaskConfiguration {
   command: string;
 
   /**
+   * Which file to save
+   * Defaults to 'none', 'all','current' are available
+   */
+  save: string
+
+  /**
    * Specifies whether a global command is a background task.
    * Defaults to false
    */
@@ -140,6 +146,12 @@ interface TaskDescription {
    * Defaults to ''
    */
   command: string;
+
+  /**
+   * Which file to save
+   * Defaults to 'none', 'all','current' are available
+   */
+  save: string
 
   /**
    * Whether the executed command is kept alive and runs in the background.
@@ -259,6 +271,7 @@ It will start by `:FloatermNew[!]`
         {
             "label": "quick-run",
             "type": "floaterm",
+            "save": "current",
             "options": {
                 "position": "bottomright",
                 "autoclose": 0

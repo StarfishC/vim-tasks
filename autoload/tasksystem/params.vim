@@ -89,6 +89,7 @@ function! s:schema_params(opts, rep) abort
     let params = a:opts
     let params.type = get(a:opts, "type", get(a:rep, "type", "floaterm"))
     let params.command = get(a:opts, 'command', get(a:rep, "command", ""))
+    let params.save = get(a:opts, 'save', get(a:rep, "save", "none"))
     let params.isBackground = get(a:opts, 'isBackground', get(a:rep, "isBackground", v:false))
     let params.options = get(a:opts, 'options', get(a:rep, "options", {}))
     let params.options.cwd = get(params.options, 'cwd', get(get(a:rep, "options", {}), "cwd", "${workspaceFolder}"))

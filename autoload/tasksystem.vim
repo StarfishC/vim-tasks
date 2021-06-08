@@ -8,7 +8,12 @@
 " ============================================================================
 
 function! s:start_task(bang, params)
-    let type = get(a:params, 'type', 'floaterm')
+    if a:params.save == "current"
+        silent! exec 'w'
+    elseif a:params.save == "all"
+        silent! exec 'wall'
+    endif
+    let type = a:params.type
     if type == 'floaterm'
         call tasksystem#floaterm#run(a:bang, a:params)
     elseif type == 'vim'

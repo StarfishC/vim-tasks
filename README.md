@@ -358,7 +358,7 @@ If you set `filetype` in your single `task`, you can override these parameters: 
 
 MIT
 
-[1]: ./GIF1.gif
+[1]: https://user-images.githubusercontent.com/49725192/121277677-b5603c80-c903-11eb-8d03-fb8054d7e1ff.gif
 [2]: https://github.com/voldikss/vim-floaterm
 [3]: https://github.com/Yggdroot/LeaderF
 [4]: https://github.com/junegunn/vim-plug

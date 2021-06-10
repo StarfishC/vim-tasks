@@ -55,6 +55,7 @@ Predefinedvars like vscode
 | ${cword} | the word under the cursor |
 | ${selectedText} (can't support now)| the current selected text in the active file |
 | ${cwd} (can't support now)| the task runner's current working directory on startup |
+| ${input=xxx} | If you want to input something in vim, xxx is input tips|
 
 ### Options
 

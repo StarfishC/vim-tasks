@@ -22,8 +22,8 @@
 " ${cword} - the word under the cursor
 " ${lineNumber} - the current selected line number in the active file
 " ${selectedText} - the current selected text in the active file
-" ${execPath} - the path to the running VS Code executable
 " ${pathSeparator} - the character used by the operating system to separate components in file paths
+" ${input=xxx} - you can input something in vim
 
 
 let s:local_json_name = get(g:, "tasksystem_localTasksName", "")
@@ -127,6 +127,7 @@ function! s:transfer_vars(str) abort
     endif
     let subpattern = '\${[a-zA-Z]\{-}}'
     let keypattern = '[a-zA-Z]\+'
+    let inputpattern = '\${input=\(.\{-}\)}'
     let tmp = a:str
     while v:true
         let substr = matchstr(tmp, subpattern)
@@ -134,7 +135,19 @@ function! s:transfer_vars(str) abort
         if has_key(macros, keystr)
             let tmp = substitute(tmp, substr, macros[keystr], 'g')
         else
-            break
+            let inputstr = matchstr(tmp, inputpattern)
+            let tips = substitute(inputstr, inputpattern, '\1', 'g')
+            if inputstr != ''
+                call inputsave()
+                echohl type
+                let inputcontent = input("Input your " . tips . ": ")
+                execute "normal \<ESC>"
+                echohl None
+                call inputrestore()
+                let tmp = substitute(tmp, inputpattern, inputcontent, '')
+            else
+                break
+            endif
         endif
     endwhile
     return tmp

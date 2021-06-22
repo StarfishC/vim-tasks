@@ -195,8 +195,12 @@ export interface TaskDescription {
     * Defaults to 'parallel'
     * Valid options: ["parallel", "sequent", "continuous"]
     * - "parallel": these tasks can be executed in parallel
-    * - "sequent": these tasks can be executed in sequent, e.g, ["ls", "pwd"] "ls" will be executed firstly, no matter whether the task is successful or not, and "pwd" will be executed secondly, 
-    * - "continuous": these tasks can be executed in continuous, e.g, ["rm xxx", "ls"] "rm xxx" will be executed firstly, if execution failed, the next command "ls" will not be exectue, like "rm xxx && ls " in your shell
+    * - "sequent": these tasks can be executed in sequent
+          e.g, ["ls", "pwd"] "ls" will be executed firstly, no matter whether the task is successful or not, 
+               and "pwd" will be executed secondly, 
+    * - "continuous": these tasks can be executed in continuous
+          e.g, ["rm xxx", "ls"] "rm xxx" will be executed firstly, if execution failed, 
+               the next command "ls" will not be exectue, like "rm xxx && ls " in your shell
     */
     dependsOrder?: string;
     

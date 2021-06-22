@@ -233,14 +233,29 @@ endfunction
 
 function! tasksystem#params#taskinfo() abort
     let files = {'global': expand(s:default_global_path . '/' . s:global_json_name),
-             \ 'local' : expand(s:default_local_path . '/' . s:local_json_name)}
+               \ 'local' : expand(s:default_local_path . '/' . s:local_json_name)}
+    let flag = v:false
     for file in keys(files)
         let lasttime = getftime(files[file])
-        if lasttime != -1 && lasttime > s:file_modify_time[file]
+        if s:file_modify_time[file] == 0
+            echo "123"
             let s:file_modify_time[file] = lasttime
             call s:process_params(file, s:json_decode(files[file]))
+        elseif lasttime != -1 && lasttime > s:file_modify_time[file]
+            let flag = v:true
+            break
         endif
     endfor
+    if flag
+        let s:tasks_complete_list = []
+        let s:tasks_info = {}
+        let s:tasks_filetype = {}
+        for file in keys(files)
+            echo file
+            let s:file_modify_time[file] = getftime(files[file])
+            call s:process_params(file, s:json_decode(files[file]))
+        endfor
+    endif
     return s:tasks_info
 endfunction
 

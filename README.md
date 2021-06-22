@@ -1,5 +1,9 @@
 # Tasksystem
 
+[![GitHub license](https://img.shields.io/github/license/caoshenghui/tasksystem)](https://github.com/caoshenghui/tasksystem/blob/master/LICENSE) 
+[![Maintenance](https://img.shields.io/maintenance/yes/2021)](https://github.com/caoshenghui/tasksystem/graphs/commit-activity)
+
+
 An asynchronous task system like vscode on **(Neo)Vim**
 
 ![Sceenshot][1]
@@ -14,7 +18,7 @@ An asynchronous task system like vscode on **(Neo)Vim**
 
 ## Instruction
 
-Vscode use a `.vscode/tasks.json` file to define project specific tasks. Similar, Tasksystem uses a `.tasks.json` file in your project folders for local tasks and use `'~/.config/nvim/tasks.json'` for `neovim`( or `~/.vim/tasks.json` for `vim`) to define global tasks for generic projects.
+Vscode uses a `.vscode/tasks.json` file to define project specific tasks. Similar, Tasksystem uses a `.tasks.json` file in your project folders for local tasks and uses `~/.vim/tasks.json` for `vim`( or `'~/.config/nvim/tasks.json'` for `neovim`) to define global tasks for generic projects.
 
 ## Installtion
 
@@ -27,13 +31,13 @@ Plug 'voldikss/vim-floaterm'
 
 in your `.vimrc` or `init.vim`, then restart (neo)vim and run `:PlugInstall`
 
-## Usage
-
-### Start command
+## Start command
 
 ```vim
 :Tasksystem[!] taskname
 ```
+
+## Configuration
 
 ### Predefinedvars
 
@@ -41,32 +45,32 @@ Predefinedvars like vscode
 
 | Name | Description |
 | ---- | ----------- |
-| ${workspaceFolder} |  the path of the folder opened in (Neo)Vim|
-| ${workspaceFolderBasename}| the name of the folder opened in (Neo)Vim without any slashes (/) |
-| ${file} | the current opened file |
-| ${fileWorkspaceFolder} | the current opened file's workspace folder |
-| ${relativeFile} | the current opened file relative to workspaceFolder |
-| ${relativeFileDirname} | the current opened file's dirname relative to workspaceFolder |
-| ${fileBasename} | the current opened file's basename |
-| ${fileBasenameNoExtension} | the current opened file's basename with no file extension |
-| ${fileDirname} | the current opened file's dirname |
-| ${fileExtname} | the current opened file's extension |
-| ${lineNumber} | the current selected line number in the active file |
-| ${cword} | the word under the cursor |
+| **${workspaceFolder}** |  the path of the folder opened in (Neo)Vim|
+| **${workspaceFolderBasename}**| the name of the folder opened in (Neo)Vim without any slashes (/) |
+| **${file}** | the current opened file |
+| **${fileWorkspaceFolder}** | the current opened file's workspace folder |
+| **${relativeFile}** | the current opened file relative to workspaceFolder |
+| **${relativeFileDirname}** | the current opened file's dirname relative to workspaceFolder |
+| **${fileBasename}** | the current opened file's basename |
+| **${fileBasenameNoExtension}** | the current opened file's basename with no file extension |
+| **${fileDirname}** | the current opened file's dirname |
+| **${fileExtname}** | the current opened file's extension |
+| **${lineNumber}** | the current selected line number in the active file |
+| **${cword}** | the word under the cursor |
 | ${selectedText} (can't support now)| the current selected text in the active file |
 | ${cwd} (can't support now)| the task runner's current working directory on startup |
-| ${input=xxx} | If you want to input something in vim, xxx is input tips|
+| **${input=xxx}** | If you want to input something in vim, xxx is input tips|
 
 ### Options
 
-**Tasksystem** can support mostly vscode's options for `tasks.json`, you can learn more through [Vscode's tasks][5] and [Schema for tasks.json][6]
-
+> **Tasksystem** can support mostly vscode's options for `tasks.json`, you can learn more through [Vscode's tasks][5] and [Schema for tasks.json][6]
 Schema for Tasksystem's tasks.json:
 
 ```jsonc
 interface TaskConfiguration extends BaseTaskConfiguration {
   /**
    * The configuration's version number
+   * can be ommitted
    */
   version: '1.0.0';
 }
@@ -74,102 +78,99 @@ interface TaskConfiguration extends BaseTaskConfiguration {
 interface BaseTaskConfiguration {
   /**
    * The type of a custom task. Tasks of type "shell" are executed
-   * a shell (e.g. floaterm)
    * Defaults to 'floaterm'
+   * Valid options: ['floaterm']
    */
   type: string;
 
   /**
-   * The command to be executed.
+   * The command to be executed
    * Defaults to ''
    */
   command: string;
 
   /**
-   * Which file to save
-   * Defaults to 'none', 'all','current' are available
+   * Which buffer to write
+   * Defaults to 'none'
+   * Valid options: ['none', 'all', 'current']
+   * - 'none': not save any buffer
+   * - 'all': write all changed buffers
+   * - 'current': only write current buffer
    */
-  save: string
+  save?: string
 
   /**
-   * Specifies whether a global command is a background task.
-   * Defaults to false
+   * The command options used when the command is executed
    */
-  isBackground?: boolean;
+  options?: CommandOptions;  see "interface CommandOptions" for details
 
   /**
-   * The command options used when the command is executed.
-   */
-  options?: CommandOptions;  see `interface CommandOptions` for details
-
-  /**
-   * The arguments passed to the command.
+   * The arguments passed to the command
    * Defaults to []
    */
   args?: string[];
 
   /**
-   * The presentation options.
+   * The presentation options
    */
-  presentation?: PresentationOptions; see `interface PresentationOptions` for details
+  presentation?: PresentationOptions; see "interface PresentationOptions" for details
 
   /**
-   * The configuration of the available tasks.
+   * The configuration of the available tasks
    */
-  tasks?: TaskDescription[]; see `interface TaskDescription` for details
+  tasks?: TaskDescription[]; see "interface TaskDescription" for details
 }
 
 export interface CommandOptions {
   /**
-   * The current working directory of the executed program or shell.
-   * Defaults to '${workspaceFolder}'
+   * The current working directory of the executed program or shell
+   * Defaults to "${workspaceFolder}"
    */
   cwd?: string;
+}
 
-/**
- * The description of a task.
- */
-interface TaskDescription {
+export interface PresentationOptions {
+  /**
+   * Controls whether the task output is reveal in the user interface
+   * Defaults to "always"
+   * Valid options: ["silent", "always"]
+   * - "silent": not show in the user interface
+   * - "always": always show
+   */
+  reveal?: string;
+
+  /**
+   * Controls whether the panel showing the task output is taking focus
+   * Maybe it cause some problem in vim's popup windows
+   */
+  focus?: boolean;
+
+  /**
+   * Controls how the task panel is used
+   * Defaults to "new"
+   * Valid: ["new", "shared", "dedicated"]
+   * - "new": every task execution will open a new panel 
+   * - "shared": a panel shares between tasks, if the panel is not existed, a new panel will be created
+   * - "dedicated": the task panel is used for this task only
+   */
+  panel?: string;
+}
+
+export interface TaskDescription {
   /**
    * The task's name
    */
   label: string;
 
   /**
-   * The type of a custom task. Tasks of type "shell" are executed
-   * inside a shell (e.g. terminal, floaterm)
-   * Defaults to 'floaterm'
+   * These following options correspond to the options of "interface BaseTaskConfiguration"
+   * Only work the task if you set these options
    */
-   type: string;
-
-  /**
-   * The command to execute.
-   * command line including any additional arguments passed to the command.
-   * Defaults to ''
-   */
+  type: string;
   command: string;
-
-  /**
-   * Which file to save
-   * Defaults to 'none', 'all','current' are available
-   */
-  save: string
-
-  /**
-   * Whether the executed command is kept alive and runs in the background.
-   * Defaults to false
-   */
-  isBackground?: boolean;
-
-  /**
-   * Additional arguments passed to the command.
-   * Defaults to []
-   */
+  save?: string;
   args?: string[];
-
-  /**
-   * The presentation options.
-   */
+  options?: CommandOptions;
   presentation?: PresentationOptions;
 
   /**
@@ -179,44 +180,39 @@ interface TaskDescription {
    dependsOn?: string[];
 
   /**
-   * The task executed order
+   * Order of the task execution
    * 'preLaunch' and 'postLaunch' are available
    * If you set 'preLaunch', the task will be executed after `dependsOn`, 'postLaunch' is before `dependsOn`
-   * Defaults to 'preLaunch' 
+   * Defaults to "preLaunch"
+   * Valid options: ["preLaunch", "postLaunch"]
+   * - "preLaunch": the task will be executed after `dependsOn`
+   * - "postLaunch": the task will be executed before `dependsOn`
    */
    dependsType?: string;
 
    /**
     * Execute 'dependsOn' mode
-    * Defaults to 'parallel', 'sequent', 'continuous' are available
+    * Defaults to 'parallel'
+    * Valid options: ["parallel", "sequent", "continuous"]
+    * - "parallel": these tasks can be executed in parallel
+    * - "sequent": these tasks can be executed in sequent, e.g, ["ls", "pwd"] "ls" will be executed firstly, no matter whether the task is successful or not, and "pwd" will be executed secondly, 
+    * - "continuous": these tasks can be executed in continuous, e.g, ["rm xxx", "ls"] "rm xxx" will be executed firstly, if execution failed, the next command "ls" will not be exectue, like "rm xxx && ls " in your shell
     */
     dependsOrder?: string;
-}
-
-interface PresentationOptions {
-  /**
-   * Controls whether the task output is reveal in the user interface.
-   * Defaults to `always`.
-   */
-  reveal?: 'never' | 'silent' | 'always';
-
-  /**
-   * Controls whether the panel showing the task output is taking focus.
-   */
-  focus?: boolean;
-
-  /**
-   * Controls if the task panel is used for this task only (dedicated),
-   * shared between tasks (shared) or if a new panel is created on
-   * every task execution (new). Defaults to `new`
-   */
-  panel?: 'shared' | 'dedicated' | 'new';
+    
+   /**
+    * The task only works specific filetype, works on all filetype by default
+    * You can reconfigure `task` options expect "label","filetype"
+    * e.g, {"cpp": {"command": "g++", "args": [], "python": {"command": "python3"}}
+    * See README 'Examples' for details
+    */
+    filetype?:{}task;
 }
 ```
 
 #### floaterm
 
-If you want to use floaterm's options you can put it's options to json's options.If you don't set floaterm's options, when you start a task, it's settins depend on [floaterm's options][7]
+If you want to use floaterm's options you can put it's options to json's `options`.If you don't set floaterm's options in tasks.json, when you start a task, it's settings depend on [floaterm's options][7]
 
 For example:
 
@@ -236,11 +232,11 @@ For example:
     "title": "test",
     "position": "center"
   },
-  // if you omit `options['silent']`, `isBackground` will decide whether silent
-  "isBackground": false,
   "presentation": {
     // when `panel='shared'`, it will reuse floaterm's windows next
-    "panel": "shared"
+    "panel": "shared",
+    // if you omit `options['silent']`, `reveal` will decide whether silent
+    "reveal": "silent",
   }
 }
 ```
@@ -254,6 +250,8 @@ If `panel != 'shared'`
 ```
 
 It will start by `:FloatermNew[!]`
+
+If `panel = 'shared'` then it use `:FloatermNew!` to create a terminal so that it can be reuse again
 
 ### Examples
 
@@ -345,11 +343,8 @@ It will start by `:FloatermNew[!]`
 }
 ```
 
-**Note:**
-
-If you set `filetype` in your single `task`, you can override these parameters: `command`,`args`,`options`,`type`.And this task only works filetypes list in `filetype`
-
 ## Reference
+
 
 [skywind3000/asynctasks.vim][8]
 
@@ -359,7 +354,7 @@ If you set `filetype` in your single `task`, you can override these parameters: 
 
 MIT
 
-[1]: https://user-images.githubusercontent.com/49725192/121277677-b5603c80-c903-11eb-8d03-fb8054d7e1ff.gif
+[1]: https://user-images.githubusercontent.com/49725192/122890034-e87be480-d375-11eb-8d81-5b7b1e1cb74e.gif
 [2]: https://github.com/voldikss/vim-floaterm
 [3]: https://github.com/Yggdroot/LeaderF
 [4]: https://github.com/junegunn/vim-plug

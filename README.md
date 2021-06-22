@@ -7,9 +7,9 @@ An asynchronous task system like vscode on **(Neo)Vim**
 ## Features
 
 - [x] support [vim-floaterm][2]
-- [x] support sequent tasks
 - [ ] support terminal
 - [ ] support quickfix
+- [x] support parallel/sequent/continuous tasks
 - [ ] list in [LeaderF][3]
 
 ## Instruction

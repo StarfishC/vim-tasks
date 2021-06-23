@@ -141,7 +141,7 @@ export interface PresentationOptions {
 
   /**
    * Controls whether the panel showing the task output is taking focus
-   * Maybe it cause some problem in vim's popup windows
+   * Can't work correctly in vim popup windows(E994)
    */
   focus?: boolean;
 
@@ -348,7 +348,6 @@ If `panel = 'shared'` then it use `:FloatermNew!` to create a terminal so that i
 ```
 
 ## Reference
-
 
 [skywind3000/asynctasks.vim][8]
 

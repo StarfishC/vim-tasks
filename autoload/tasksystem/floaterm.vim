@@ -61,12 +61,17 @@ function! s:floaterm_run_new(bang, opts) abort
     let cmd .= ' ' . cmdline
     exec cmd
     if get(a:opts.presentation, 'focus', 1) == 0
-        stopinsert | noa wincmd p
-        augroup close-floaterm-runner
-            autocmd!
-            autocmd CursorMoved,InsertEnter * ++nested call timer_start(100, { -> s:floaterm_close() })
-        augroup end
+        call s:floaterm_focus()
     endif
+endfunction
+
+function s:floaterm_focus() abort
+    if !has("nvim") | return | endif
+    stopinsert | noa wincmd p
+    augroup close-floaterm-runner
+        autocmd!
+        autocmd CursorMoved,InsertEnter * ++nested call timer_start(100, { -> s:floaterm_close() })
+    augroup end
 endfunction
 
 function! s:floaterm_close() abort
@@ -82,7 +87,7 @@ endfunction
 function! s:floaterm_run_op(bang, opts, panel) abort
     let params = s:floaterm_params(a:opts)
     if a:panel == 'dedicated'
-        let bufnr = floaterm#terminal#get_bufnr(a:opts.name)
+        let curr_bufnr = floaterm#terminal#get_bufnr(params.name)
     elseif a:panel == 'shared'
         let curr_bufnr = floaterm#buflist#curr()
     endif
@@ -105,7 +110,9 @@ function! s:floaterm_run_op(bang, opts, panel) abort
     if &filetype == 'floaterm' && g:floaterm_autoinsert
         call floaterm#util#startinsert()
     endif
-    return 0
+    if get(a:opts.presentation, 'focus', 1) == 0
+        call s:floaterm_focus()
+    endif
 endfunction
 
 

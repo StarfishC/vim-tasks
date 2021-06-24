@@ -48,7 +48,7 @@ function! tasksystem#extensions#leaderf#init() abort
         \ }
 
     if !exists(':LeaderfTask')
-        command! -bar -nargs=+ LeaderfTask Leaderf task <args>
+        command! -bar -nargs=* LeaderfTask Leaderf task <args>
     endif
 endfunction
 

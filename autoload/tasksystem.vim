@@ -49,7 +49,7 @@ function! tasksystem#run(bang, label) abort
         let params = tasksystem#params#replacemacros(taskinfo[label])
         let cmd = ''
         if len(params.dependsOn) == 1
-            call s:start_task(a:label, params)
+            call s:start_task(a:bang, params)
             return
         endif
         for name in params.dependsOn

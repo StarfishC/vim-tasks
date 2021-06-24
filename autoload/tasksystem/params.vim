@@ -91,7 +91,6 @@ function! s:schema_params(opts, rep) abort
     let params.type = get(a:opts, "type", get(a:rep, "type", "floaterm"))
     let params.command = get(a:opts, 'command', get(a:rep, "command", ""))
     let params.save = get(a:opts, 'save', get(a:rep, "save", "none"))
-    let params.isBackground = get(a:opts, 'isBackground', get(a:rep, "isBackground", v:false))
     let params.options = get(a:opts, 'options', get(a:rep, "options", {}))
     let params.options.cwd = get(params.options, 'cwd', get(get(a:rep, "options", {}), "cwd", "${workspaceFolder}"))
     " let params.options.env = get(params.options, 'env', {})       unuseful now
@@ -162,6 +161,7 @@ function! s:process_params(name, opts) abort
         if get(task, 'label', '') == ''
             call tasksystem#utils#errmsg('task miss "label"')
         endif
+        let task.label = trim(task.label, " ")
         if index(s:tasks_complete_list, task.label) != -1
             let task.label = task.label . "::" . a:name
         endif
@@ -238,7 +238,6 @@ function! tasksystem#params#taskinfo() abort
     for file in keys(files)
         let lasttime = getftime(files[file])
         if s:file_modify_time[file] == 0
-            echo "123"
             let s:file_modify_time[file] = lasttime
             call s:process_params(file, s:json_decode(files[file]))
         elseif lasttime != -1 && lasttime > s:file_modify_time[file]
@@ -251,7 +250,6 @@ function! tasksystem#params#taskinfo() abort
         let s:tasks_info = {}
         let s:tasks_filetype = {}
         for file in keys(files)
-            echo file
             let s:file_modify_time[file] = getftime(files[file])
             call s:process_params(file, s:json_decode(files[file]))
         endfor

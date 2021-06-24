@@ -10,11 +10,11 @@ An asynchronous task system like vscode on **(Neo)Vim**
 
 ## Features
 
-- [x] support [vim-floaterm][2]
 - [ ] support terminal
 - [ ] support quickfix
 - [x] support parallel/sequent/continuous tasks
-- [ ] list in [LeaderF][3]
+- [x] support [vim-floaterm][2]
+- [x] list in [LeaderF][3]
 
 ## Instruction
 
@@ -29,7 +29,7 @@ Plug 'caoshenghui/tasksystem'
 Plug 'voldikss/vim-floaterm'
 ```
 
-in your `.vimrc` or `init.vim`, then restart (neo)vim and run `:PlugInstall`
+in your `.vimrc` or `init.vim`, then restart (neo)vim and run **`:PlugInstall`**
 
 ## Start command
 
@@ -37,7 +37,27 @@ in your `.vimrc` or `init.vim`, then restart (neo)vim and run `:PlugInstall`
 :Tasksystem[!] taskname
 ```
 
-## Configuration
+## Vim configuration
+
+```vim
+" Configure your global task file directory
+" Default: '~/.vim' for vim and '~/.config/nvim' for nvim
+g:tasksystem_globalPath
+
+" Markers used to detect the project root directory
+" Default: ['.project', '.root', '.git', '.hg', '.svn']
+g:tasksystem_rootMarkers
+
+" Global task json file name
+" Default: 'tasks.json'
+g:tasksystem_globalTasksName
+
+" Local task json file name
+" Default: '.tasks.json'
+g:tasksystem_localTasksName
+```
+
+## Task congiguration
 
 ### Predefinedvars
 
@@ -214,11 +234,13 @@ export interface TaskDescription {
 }
 ```
 
-#### floaterm
+## Extensions
+
+### [vim-floaterm][2]
 
 If you want to use floaterm's options you can put it's options to json's `options`.If you don't set floaterm's options in tasks.json, when you start a task, it's settings depend on [floaterm's options][7]
 
-For example:
+**Example:**
 
 ```jsonc
 {
@@ -235,29 +257,34 @@ For example:
     "height": 0.5,
     "title": "test",
     "position": "center"
-  },
-  "presentation": {
-    // when `panel='shared'`, it will reuse floaterm's windows next
-    "panel": "shared",
-    // if you omit `options['silent']`, `reveal` will decide whether silent
-    "reveal": "silent",
-  }
+   },
+   "presentation": {
+     // when `panel='shared'`, it will reuse floaterm's windows next
+     "panel": "shared",
+     // if you omit `options['silent']`, `reveal` will decide whether silent
+     "reveal": "silent",
+   }
 }
 ```
 
 **Command:**
 
-If `panel != 'shared'`
+If `panel != 'shared'`, **`:Tasksystem[!] taskname`** will start by **`:FloatermNew[!]`**  
+If `panel = 'shared'` then it uses **`:FloatermNew!`** to create a terminal so that it can be reused again
+
+### [LeaderF][3]
+
+If you want to list tasks in **LeaderF**, you need set the following option:
 
 ```vim
-:Tasksystem[!] taskname
+let g:tasksystem_listLeaderF = 1
 ```
 
-It will start by `:FloatermNew[!]`
+Use **`:LeaderfTask`** or **`:Leaderf --nowrap task`** to start
 
-If `panel = 'shared'` then it use `:FloatermNew!` to create a terminal so that it can be reuse again
+![LeaderfScreenShot][9]
 
-### Examples
+## Json Examples
 
 `tasks.json`
 
@@ -365,3 +392,4 @@ MIT
 [6]: https://code.visualstudio.com/docs/editor/tasks-appendix
 [7]: https://github.com/voldikss/vim-floaterm#options
 [8]: https://github.com/skywind3000/asynctasks.vim
+[9]: https://user-images.githubusercontent.com/49725192/123261538-764c0100-d529-11eb-992c-add3f4724bad.png

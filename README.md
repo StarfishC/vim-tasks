@@ -110,6 +110,12 @@ interface BaseTaskConfiguration {
    * Defaults to ''
    */
   command: string;
+  
+  /**
+   * The arguments passed to the command
+   * Defaults to []
+   */
+  args?: string[];
 
   /**
    * Which buffer to write
@@ -125,12 +131,6 @@ interface BaseTaskConfiguration {
    * The command options used when the command is executed
    */
   options?: CommandOptions;  see "interface CommandOptions" for details
-
-  /**
-   * The arguments passed to the command
-   * Defaults to []
-   */
-  args?: string[];
 
   /**
    * The presentation options
@@ -191,8 +191,8 @@ export interface TaskDescription {
    */
   type: string;
   command: string;
-  save?: string;
   args?: string[];
+  save?: string;
   options?: CommandOptions;
   presentation?: PresentationOptions;
 

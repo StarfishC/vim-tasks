@@ -163,7 +163,8 @@ export interface PresentationOptions {
 
   /**
    * Controls whether the panel showing the task output is taking focus
-   * Can't work correctly in vim popup windows(E994)
+   * Note: can't work correctly in vim popup windows(E994)
+   * Defaults to true
    */
   focus?: boolean;
 

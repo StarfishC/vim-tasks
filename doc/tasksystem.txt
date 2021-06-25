@@ -188,7 +188,7 @@ BaseTaskConfiguration:
     'label': Type |string|
         The task's name
 
-    'type' | 'command' | 'args' | 'save' | 'options' | 'presentation'
+    'type', 'command', 'args', 'save', 'options', 'presentation'
         Only works for this task if you set these options
         See the previous introduction for these options
 

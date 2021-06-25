@@ -187,7 +187,7 @@ export interface TaskDescription {
 
   /**
    * These following options correspond to the options of "interface BaseTaskConfiguration"
-   * Only work the task if you set these options
+   * Only works for this task if you set these options
    */
   type: string;
   command: string;
@@ -203,9 +203,7 @@ export interface TaskDescription {
    dependsOn?: string[];
 
   /**
-   * Order of the task execution
-   * 'preLaunch' and 'postLaunch' are available
-   * If you set 'preLaunch', the task will be executed after `dependsOn`, 'postLaunch' is before `dependsOn`
+   * Order of this task execution
    * Defaults to "preLaunch"
    * Valid options: ["preLaunch", "postLaunch"]
    * - "preLaunch": the task will be executed after `dependsOn`
@@ -220,9 +218,9 @@ export interface TaskDescription {
     * - "parallel": these tasks can be executed in parallel
     * - "sequent": these tasks can be executed in sequent
           e.g, ["ls", "pwd"] "ls" will be executed firstly, no matter whether the task is successful or not, 
-               and "pwd" will be executed secondly, 
+               and "pwd" will be executed secondly
     * - "continuous": these tasks can be executed in continuous
-          e.g, ["rm xxx", "ls"] "rm xxx" will be executed firstly, if execution failed, 
+          e.g, ["rm xxx", "ls"] "rm xxx" will be executed firstly, if execution failed,
                the next command "ls" will not be exectue, like "rm xxx && ls " in your shell
     */
     dependsOrder?: string;
@@ -231,9 +229,9 @@ export interface TaskDescription {
     * The task only works specific filetype, works on all filetype by default
     * You can reconfigure `task` options expect "label","filetype"
     * e.g, {"cpp": {"command": "g++", "args": [], "python": {"command": "python3"}}
-    * See README 'Examples' for details
+    * See README.md 'Examples' for details
     */
-    filetype?:{}task;
+    filetype?:{}tasks;
 }
 ```
 
@@ -277,13 +275,13 @@ If `panel = 'shared'` then it uses **`:FloatermNew!`** to create a terminal so t
 
 ### [LeaderF][3]
 
-If you want to list tasks in **LeaderF**, you need set the following option:
+If you want to list tasks in **LeaderF**, you need configure the following option:
 
 ```vim
 let g:tasksystem_listLeaderF = 1
 ```
 
-Use **`:LeaderfTask`** or **`:Leaderf --nowrap task`** to start
+Using  **`:LeaderfTask`** or **`:Leaderf --nowrap task`** to start
 
 ![LeaderfScreenShot][9]
 

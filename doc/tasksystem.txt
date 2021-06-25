@@ -136,7 +136,7 @@ BaseTaskConfiguration:
     The command to be executed
     Default: ''
 
-"args": Type |list-string|              *tasksystem-task-options-args|
+"args": Type |list-string|              *tasksystem-task-options-args*
 
     The arguments passed to the command
     Default: []

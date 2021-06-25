@@ -1,1 +1,253 @@
+*tasksystem.txt*           An asynchronous task system like vscode on (Neo)Vim
+==============================================================================
+File:           params.vim
+Author:         caoshenghui <576365750@qq.com>
+Github:         https://github.com/caoshenghui
+Description:
+LICENSE:        MIT
+==============================================================================
 
+CONTENTS                                *tasksystem-contents*
+
+Introduction                            |tasksystem-introduction|
+Features                                |tasksystem-features|
+Installation                            |tasksystem-installation|
+Commands                                |tasksystem-commands|
+Vim configuration                       |tasksystem-vim-configuration|
+Task configuration                      |tasksystem-task-configuration|
+    PredefinedVars                            |tasksystem-task-predefinedvars|
+    Options                                   |tasksystem-task-options|
+Extensions                              |tasksystem-extensions|
+    vim-floaterm                              |tasksystem-extensions-floaterm|
+    LeaderF                                   |tasksystem-extensions-LeaderF|
+
+==============================================================================
+INTRODUCTION                            *tasksystem-introduction*
+
+Tasksystem is an asynchronous task system like vscode on (Neo)Vim
+
+Vscode uses a .vscode/tasks.json file to define project specific tasks.
+Similar, Tasksystem uses a .tasks.json file in your project folders for local
+tasks and uses ~/.vim/tasks.json for vim( or '~/.config/nvim/tasks.json' for
+neovim) to define global tasks for generic projects
+
+==============================================================================
+FEATURES                                *tasksystem-features*
+
+x support terminal
+x support quickfix
+- support parallel/sequent/continuous tasks
+- support vim-floaterm
+- list tasks in LeaderF
+
+==============================================================================
+INSTALLATION                            *tasksystem-installation*
+
+For vim-plug:
+>
+    Plug 'caoshenghui/tasksystem'
+    Plug 'voldikss/vim-floaterm'
+<
+in your .vimrc  or init.vim, then restart (Neo)Vim and run :PlugInstall
+
+==============================================================================
+COMMANDS                                *tasksystem-commands*
+
+:Tasksystem[!] taskname                 *:Tasksystem*
+
+    Run a task called taskname
+
+==============================================================================
+VIM CONFIGURATION                       *tasksystem-vim-configuration*
+
+g:tasksystem_globalPath                 *g:tasksystem_globalPath*
+
+    Configure your global task file directory
+    Default: '~/.vim' for vim or '~/.config/nvim' for nvim
+
+g:tasksystem_rootMarkers                *g:tasksystem_rootMarkers*
+
+    Markers used to detect the project root directory
+    Default: ['.project', '.root', '.git', '.hg', '.svn']
+
+g:tasksystem_globalTasksName            *g:tasksystem_globalTasksName*
+
+    Global task json file name
+    Default: 'tasks.json'
+
+g:tasksystem_localTasksName             *g:tasksystem_localTasksName*
+
+    Local task json file name
+    Default: '.tasks.json'
+
+g:tasksystem_listLeaderF                *g:tasksystem_listLeaderF*
+
+    Whether to list tasks in LeaderF
+    Default: 0
+
+==============================================================================
+Task CONFIGURATION                      *tasksystem-task-configuration*
+
+------------------------------------------------------------------------------
+PREDEFINEDVARS                          *tasksystem-task-predefinedvars*
+
+PredefinedVars like vscode
+
+${workspaceFolder}         :the path of the folder opened in (Neo)Vim
+${workspaceFolderBasename} :the name of the folder opened in Vim without any
+                           :slashes (/)
+${file}                    :the current opened file
+${fileWorkspaceFolder}     :the current opened file's workspace folder
+${relativeFile}            :the current opened file relative to
+                           :workspaceFolder
+${relativeFileDirname}     :the current opened file's dirname relative to
+                           :workspaceFolder
+${fileBasename}            :the current opened file's basename
+${fileBasenameNoExtension} :the current opened file's basename with no file
+                           :extension
+${fileDirname}             :the current opened file's dirname
+${fileExtname}             :the current opened file's extension
+${cword}                   :the word under the cursor
+${lineNumber}              :the current selected line number in the active file
+${selectedText}            :the current selected text in the active file
+${pathSeparator}           :the character used by the operating system to
+                            separate components in file paths
+${input=xxx}               :you can input something in vim
+
+------------------------------------------------------------------------------
+OPTIONS                                 *tasksystem-task-options*
+
+BaseTaskConfiguration:
+
+"version": Type |string|                *tasksystem-task-options-version*
+
+    The configuration's version number, can be ommited
+    Default: '1.0.0'
+
+"type": Type |string|                   *tasksystem-task-options-type*
+
+    The type of a custom task. Tasks of type "shell" are executed
+    Default: 'floaterm'
+    Valid options: ['floaterm']
+
+"command": Type |string|                *tasksystem-task-options-command*
+
+    The command to be executed
+    Default: ''
+
+"args": Type |list-string|              *tasksystem-task-options-args|
+
+    The arguments passed to the command
+    Default: []
+
+"save": Type |string|                   *tasksystem-task-options-save*
+
+    Which buffer to write
+    Default: 'none'
+    Valid options: ['none', 'all', 'current']
+        - 'none': not save any buffer
+        - 'all': write all changed buffers
+        - 'current': only write current buffer
+
+"options": Type |dict|                  *tasksystem-task-options-options*
+
+    The command options used when the command is executed
+
+    'cwd': Type |string|
+        The current working directory of the executed program or shell
+        Default: "${workspaceFolder}"
+
+"presentation": Type |dict|             *tasksystem-task-options-presentation*
+
+    'reveal': Type |string|
+        Controls whether the task output is reveal in the user interface
+        Default: "always"
+        Valid options: ["silent", "always"]
+            - "silent": not show in the user interface
+            - "always": always show
+
+    'focus': Type |boolean|
+        Controls whether the panel showing the task output is taking focus
+        Note: can't work correctly in vim popup windows(E994)
+        Default: true
+
+    'panel': Type |string|
+        Controls how the task panel is used
+        Defaults to "new"
+        Valid: ["new", "shared", "dedicated"]
+            - "new": every task execution will open a new panel
+            - "shared": a panel shares between tasks, if the panel is not
+                        existed, a new panel will be created
+            - "dedicated": the task panel is used for this task only
+
+"tasks": Type |list-dict|               *tasksystem-task-options-tasks*
+
+    The configuration of the available tasks
+
+    'label': Type |string|
+        The task's name
+
+    'type' | 'command' | 'args' | 'save' | 'options' | 'presentation'
+        Only works for this task if you set these options
+        See the previous introduction for these options
+
+    'dependsOn': Type |list-string|
+        Compose tasks out of simpler tasks
+        Default: []
+
+    'dependsType': Type |string|
+        Order of this task execution
+        Defaults: "preLaunch"
+        Valid options: ["preLaunch", "postLaunch"]
+            - "preLaunch": the task will be executed after `dependsOn`
+            - "postLaunch": the task will be executed before `dependsOn`
+
+    'dependsOrder': Type |string|
+        Execute 'dependsOn' mode
+        Defaults: 'parallel'
+        Valid options: ["parallel", "sequent", "continuous"]
+            - "parallel": these tasks can be executed in parallel
+            - "sequent": these tasks can be executed in sequent
+               e.g, ["ls", "pwd"] "ls" will be executed firstly, no matter
+               whether the task is successful or not, and "pwd" will be
+               executed secondly
+            - "continuous": these tasks can be executed in continuous
+               e.g, ["rm xxx", "ls"] "rm xxx" will be executed firstly, if
+               execution failed, the next command "ls" will not be exectue,
+               like "rm xxx && ls " in your shell
+
+    'filetype':  Type |dict-tasks|
+        This task only works specific filetype, works on all filetype by
+        default
+        You can reconfigure `task` options expect "label","filetype"
+        e.g, {"cpp": {"command": "g++"}, "python": {"command": "python3"}}
+        See README.md 'Examples' for details
+
+==============================================================================
+EXTENSIONS                              *tasksystem-extensions*
+
+The extensions for Tasksystem
+
+------------------------------------------------------------------------------
+vim-floaterm                            *tasksystem-extensions-floaterm*
+
+If you want to use floaterm's options you can put it's options to json's
+`options`.If you don't set floaterm's options in tasks.json, when you start
+a task, it's settings depend on
+[floaterm's options](https://github.com/voldikss/vim-floaterm#options)
+
+You need see README.md to learn more
+
+------------------------------------------------------------------------------
+LeaderF                                 *tasksystem-extensions-LeaderF*
+
+If you want to list tasks in |LeaderF|:
+
+>
+    let g:tasksystem_listLeaderF = 1
+<
+
+Using |:LeaderfTask| or |:Leaderf --nowrap task| to start
+
+==============================================================================
+vim:tw=78:ts=4:ft=help:fen:

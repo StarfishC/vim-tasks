@@ -101,7 +101,10 @@ interface BaseTaskConfiguration {
   /**
    * The type of a custom task. Tasks of type "shell" are executed
    * Defaults to 'floaterm'
-   * Valid options: ['floaterm']
+   * Valid options: ['floaterm', 'shell', 'process']
+   * - 'floaterm': execute your task in $shell using vim-floaterm
+   * - 'shell': execute your task in $shell using vim's terminal (can't be available now)
+   * - 'process': execute your task in vim's cmdline (Ex mode)
    */
   type: string;
 
@@ -149,6 +152,23 @@ export interface CommandOptions {
    * Defaults to "${workspaceFolder}"
    */
   cwd?: string;
+  
+  /**
+   * Configuration of the shell when task type is 'floaterm' or 'shell'
+   */
+  shell: {
+    /**
+     * The shell to use
+     * Defaults to $shell
+     */
+    executable: string;
+      
+    /**
+     * The arguments to be passed to the shell executable to run in command mode
+     * (e.g ['-c'] for bash or ['/S', '/C'] for cmd.exe)
+     */
+    args?: string[];
+   }
 }
 
 export interface PresentationOptions {

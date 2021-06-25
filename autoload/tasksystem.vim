@@ -13,15 +13,14 @@ function! s:start_task(bang, params)
     elseif a:params.save == "all"
         silent! exec 'wall'
     endif
-    let type = a:params.type
-    if type == 'floaterm'
-        call tasksystem#floaterm#run(a:bang, a:params)
-    elseif type == 'vim'
+    if a:params.type == 'vim'
         let cmdline = a:params.command
         for arg in a:params.args
             let cmdline .= ' ' . arg
         endfor
         exec cmdline
+    else
+        call tasksystem#extensions#run(a:bang, a:params)
     endif
 endfunction
 

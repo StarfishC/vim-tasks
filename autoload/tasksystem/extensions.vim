@@ -14,4 +14,9 @@ function tasksystem#extensions#init() abort
     endif
 endfunction
 
-
+function tasksystem#extensions#run(bang, params) abort
+    let type = a:params.type
+    if type == 'floaterm'
+        call tasksystem#extensions#floaterm#run(a:bang, a:params)
+    endif
+endfunction

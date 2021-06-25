@@ -116,8 +116,8 @@ function! s:floaterm_run_op(bang, opts, panel) abort
 endfunction
 
 
-function! tasksystem#floaterm#run(bang, opts) abort
-    if exists(':FloatermNew') != 2
+function! tasksystem#extensions#floaterm#run(bang, opts) abort
+    if !exists(':FloatermNew')
         return tasksystem#utils#errmsg("require voldikss/vim-floatem")
     endif
     if a:opts.presentation.panel == 'new'

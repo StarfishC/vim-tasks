@@ -31,7 +31,9 @@ Plug 'voldikss/vim-floaterm'
 
 in your `.vimrc` or `init.vim`, then restart (neo)vim and run **`:PlugInstall`**
 
-## Start command
+## Commands
+
+### Start command
 
 ```vim
 :Tasksystem[!] taskname
@@ -57,7 +59,7 @@ g:tasksystem_globalTasksName
 g:tasksystem_localTasksName
 ```
 
-## Task congiguration
+## Task configuration
 
 ### Predefinedvars
 

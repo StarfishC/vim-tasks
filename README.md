@@ -405,7 +405,7 @@ Using  **`:LeaderfTask`** or **`:Leaderf --nowrap task`** to start
 
 MIT
 
-[1]: https://user-images.githubusercontent.com/49725192/123510197-c2737e80-d6ac-11eb-8a4e-c18edafb8e41.gif
+[1]: https://user-images.githubusercontent.com/49725192/123510321-5a716800-d6ad-11eb-928b-e9316195a76d.gif
 [2]: https://github.com/voldikss/vim-floaterm
 [3]: https://github.com/Yggdroot/LeaderF
 [4]: https://github.com/junegunn/vim-plug

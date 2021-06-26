@@ -101,10 +101,10 @@ interface BaseTaskConfiguration {
   /**
    * The type of a custom task. Tasks of type "shell" are executed
    * Defaults to 'floaterm'
-   * Valid options: ['floaterm', 'terminal', 'Ex']
+   * Valid options: ['floaterm', 'terminal', 'ex']
    * - 'floaterm': execute your task in $shell using vim-floaterm
    * - 'terminal': execute your task in $shell using vim's terminal (can't be available now)
-   * - 'Ex': execute your task in vim's cmdline (Ex mode)
+   * - 'Ex': execute your task in vim's cmdline (ex mode)
    */
   type: string;
 
@@ -413,4 +413,5 @@ MIT
 [6]: https://code.visualstudio.com/docs/editor/tasks-appendix
 [7]: https://github.com/voldikss/vim-floaterm#options
 [8]: https://github.com/skywind3000/asynctasks.vim
-[9]: https://user-images.githubusercontent.com/49725192/123261538-764c0100-d529-11eb-992c-add3f4724bad.png
+[9]: https://user-images.githubusercontent.com/49725192/123509429-0dd75e00-d6a8-11eb-82cb-ba7cfbf90212.png
+

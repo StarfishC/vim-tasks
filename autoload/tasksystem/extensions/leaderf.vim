@@ -10,7 +10,7 @@
 
 let s:showDevicon = get(g:, "Lf_ShowDevIcons", 1)
 let s:devicons = {
-        \   "Ex":       s:showDevicon ? "\ue7c5" : "",
+        \   "ex":       s:showDevicon ? "\ue7c5" : "",
         \   "floaterm": s:showDevicon ? "\ue795" : "",
         \   "terminal": s:showDevicon ? "\uf489" : "",
         \   "local":    s:showDevicon ? "\uf53f" : "",

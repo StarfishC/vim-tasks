@@ -13,7 +13,7 @@ function! s:start_task(bang, params)
     elseif a:params.save == "all"
         silent! exec 'wall'
     endif
-    if a:params.type == 'Ex'
+    if a:params.type == 'ex'
         let cmdline = a:params.command
         for arg in a:params.args
             let cmdline .= ' ' . arg

@@ -101,10 +101,10 @@ interface BaseTaskConfiguration {
   /**
    * The type of a custom task. Tasks of type "shell" are executed
    * Defaults to 'floaterm'
-   * Valid options: ['floaterm', 'shell', 'process']
+   * Valid options: ['floaterm', 'terminal', 'Ex']
    * - 'floaterm': execute your task in $shell using vim-floaterm
-   * - 'shell': execute your task in $shell using vim's terminal (can't be available now)
-   * - 'process': execute your task in vim's cmdline (Ex mode)
+   * - 'terminal': execute your task in $shell using vim's terminal (can't be available now)
+   * - 'Ex': execute your task in vim's cmdline (Ex mode)
    */
   type: string;
 
@@ -113,7 +113,7 @@ interface BaseTaskConfiguration {
    * Defaults to ''
    */
   command: string;
-  
+
   /**
    * The arguments passed to the command
    * Defaults to []
@@ -152,7 +152,7 @@ export interface CommandOptions {
    * Defaults to "${workspaceFolder}"
    */
   cwd?: string;
-  
+
   /**
    * Configuration of the shell when task type is 'floaterm' or 'shell'
    */
@@ -162,7 +162,7 @@ export interface CommandOptions {
      * Defaults to $shell
      */
     executable: string;
-      
+
     /**
      * The arguments to be passed to the shell executable to run in command mode
      * (e.g ['-c'] for bash or ['/S', '/C'] for cmd.exe)
@@ -192,7 +192,7 @@ export interface PresentationOptions {
    * Controls how the task panel is used
    * Defaults to "new"
    * Valid: ["new", "shared", "dedicated"]
-   * - "new": every task execution will open a new panel 
+   * - "new": every task execution will open a new panel
    * - "shared": a panel shares between tasks, if the panel is not existed, a new panel will be created
    * - "dedicated": the task panel is used for this task only
    */
@@ -237,14 +237,14 @@ export interface TaskDescription {
     * Valid options: ["parallel", "sequent", "continuous"]
     * - "parallel": these tasks can be executed in parallel
     * - "sequent": these tasks can be executed in sequent
-          e.g, ["ls", "pwd"] "ls" will be executed firstly, no matter whether the task is successful or not, 
+          e.g, ["ls", "pwd"] "ls" will be executed firstly, no matter whether the task is successful or not,
                and "pwd" will be executed secondly
     * - "continuous": these tasks can be executed in continuous
           e.g, ["rm xxx", "ls"] "rm xxx" will be executed firstly, if execution failed,
                the next command "ls" will not be exectue, like "rm xxx && ls " in your shell
     */
     dependsOrder?: string;
-    
+
    /**
     * The task only works specific filetype, works on all filetype by default
     * You can reconfigure `task` options expect "label","filetype"

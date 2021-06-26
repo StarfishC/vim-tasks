@@ -120,6 +120,8 @@ function! tasksystem#extensions#floaterm#run(bang, opts) abort
     if !exists(':FloatermNew')
         return tasksystem#utils#errmsg("require voldikss/vim-floatem")
     endif
+    let shell = g:floaterm_shell
+    let g:floaterm_shell = a:opts.options.shell.executable
     if a:opts.presentation.panel == 'new'
         call s:floaterm_run_new(a:bang, a:opts)
     elseif a:opts.presentation.panel == 'shared'
@@ -127,5 +129,6 @@ function! tasksystem#extensions#floaterm#run(bang, opts) abort
     else
         call s:floaterm_run_op(v:true, a:opts, 'dedicated')
     endif
+    let g:floaterm_shell = shell
 endfunction
 

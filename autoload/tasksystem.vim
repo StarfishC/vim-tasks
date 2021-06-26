@@ -13,28 +13,28 @@ function! s:start_task(bang, params)
     elseif a:params.save == "all"
         silent! exec 'wall'
     endif
-    if a:params.type == 'vim'
+    if a:params.type == 'Ex'
         let cmdline = a:params.command
         for arg in a:params.args
             let cmdline .= ' ' . arg
         endfor
         exec cmdline
-    else
-        call tasksystem#extensions#run(a:bang, a:params)
+    elseif has_key(g:tasksystem_extensionsRunner, a:params.type)
+        call g:tasksystem_extensionsRunner[a:params.type](a:bang, a:params)
     endif
 endfunction
 
 function! tasksystem#complete(ArgLead, CmdLine, CursorPos) abort
-	let template = tasksystem#params#completelist()
-	let candidate = []
-	for key in template
-        if key != ''
-            if stridx(key, a:ArgLead) == 0
-                let candidate += [key]
-            endif
+    let template = tasksystem#params#completelist()
+    let candidate = []
+    for key in template
+    if key != ''
+        if stridx(key, a:ArgLead) == 0
+            let candidate += [key]
         endif
-	endfor
-	return candidate
+    endif
+    endfor
+    return candidate
 endfunction
 
 function! tasksystem#run(bang, label) abort

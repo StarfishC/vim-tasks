@@ -92,16 +92,17 @@ function! s:schema_params(opts, rep) abort
     let params.command = get(a:opts, 'command', get(a:rep, "command", ""))
     let params.save = get(a:opts, 'save', get(a:rep, "save", "none"))
     let params.options = get(a:opts, 'options', get(a:rep, "options", {}))
-    let params.options.cwd = get(params.options, 'cwd', get(get(a:rep, "options", {}), "cwd", "${workspaceFolder}"))
+    let params.options.cwd = get(params.options, 'cwd', "${workspaceFolder}")
     " let params.options.env = get(params.options, 'env', {})       unuseful now
-    " let params.options.shell = get(params.options, 'shell', {})   unuseful now
+    let params.options.shell = get(params.options, 'shell', get(a:rep, "shell", {}))
+    let params.options.shell.executable = get(params.options.shell, 'executable', &shell)
+    let params.options.shell.args = get(params.options.shell, 'args', [])
     let params.args = get(a:opts, 'args', get(a:rep, "args", []))
-    let presentation = {"reveal": "always", "echo" : v:false, "focus": v:true, "panel": "new"}
-    let params.presentation = get(a:opts, 'presentation', get(a:rep, "presentation", presentation))
-    let params.presentation.reveal = get(a:opts.presentation, 'reveal', get(get(a:rep, 'presentation', presentation), 'reveal', 'always'))
-    let params.presentation.echo = get(a:opts.presentation, 'echo', get(get(a:rep, 'presentation', presentation), 'echo', v:false))
-    let params.presentation.focus = get(a:opts.presentation, 'focus', get(get(a:rep, 'presentation', presentation), 'focus', v:true))
-    let params.presentation.panel = get(a:opts.presentation, 'panel', get(get(a:rep, 'presentation', presentation), 'panel', "new"))
+    let params.presentation = get(a:opts, 'presentation', get(a:rep, "presentation", {}))
+    let params.presentation.reveal = get(params.presentation, 'reveal', 'always')
+    let params.presentation.echo = get(params.presentation, 'echo', v:false)
+    let params.presentation.focus = get(params.presentation, 'focus', v:true)
+    let params.presentation.panel = get(params.presentation, 'panel', 'new')
     " let params.tasks = get(a:opts, 'tasks', get(a:rep, "tasks", []))
     if a:rep == {}
         let params.tasks = get(a:opts, 'tasks', [])

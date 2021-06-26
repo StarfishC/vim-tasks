@@ -12,11 +12,6 @@ function tasksystem#extensions#init() abort
     if get(g:, 'tasksystem_listLeaderF', 0)
         call tasksystem#extensions#leaderf#init()
     endif
+    let g:tasksystem_extensionsRunner.floaterm = function("tasksystem#extensions#floaterm#run")
 endfunction
 
-function tasksystem#extensions#run(bang, params) abort
-    let type = a:params.type
-    if type == 'floaterm'
-        call tasksystem#extensions#floaterm#run(a:bang, a:params)
-    endif
-endfunction

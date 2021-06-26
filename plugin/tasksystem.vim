@@ -27,6 +27,9 @@ let g:tasksystem_localTasksName     = get(g:, 'tasksystem_localTasksName', '.tas
 let g:tasksystem_globalTasksName    = get(g:, 'tasksystem_globalTasksName', 'tasks.json')
 let g:tasksystem_listLeaderF        = get(g:, 'tasksystem_listLeaderF', 0)
 
+let g:tasksystem_builtinRunner      = get(g:, 'tasksystem_builtinRunner', {})
+let g:tasksystem_extensionsRunner   = get(g:, 'tasksystem_extensionsRunner', {})
+
 call tasksystem#extensions#init()
 
 command! -bang -nargs=+ -range=0 -complete=customlist,tasksystem#complete Tasksystem call tasksystem#run(<bang>0, <q-args>)

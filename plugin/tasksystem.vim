@@ -25,7 +25,7 @@ let g:tasksystem_globalPath         = get(g:, 'tasksystem_globalPath', s:default
 let g:tasksystem_rootMarkers        = get(g:, 'tasksystem_rootMarkers', ['.project', '.root', '.git', '.hg', '.svn'])
 let g:tasksystem_localTasksName     = get(g:, 'tasksystem_localTasksName', '.tasks.json')
 let g:tasksystem_globalTasksName    = get(g:, 'tasksystem_globalTasksName', 'tasks.json')
-let g:tasksystem_listLeaderF        = get(g:, 'tasksystem_listLeaderF', 0)
+let g:tasksystem_usingLeaderF       = get(g:, 'tasksystem_usingLeaderF', 0)
 
 let g:tasksystem_builtinRunner      = get(g:, 'tasksystem_builtinRunner', {})
 let g:tasksystem_extensionsRunner   = get(g:, 'tasksystem_extensionsRunner', {})

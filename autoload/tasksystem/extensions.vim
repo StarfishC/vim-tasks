@@ -9,7 +9,7 @@
 
 
 function tasksystem#extensions#init() abort
-    if get(g:, 'tasksystem_listLeaderF', 0)
+    if get(g:, 'tasksystem_usingLeaderF', 0)
         call tasksystem#extensions#leaderf#init()
     endif
     let g:tasksystem_extensionsRunner.floaterm = function("tasksystem#extensions#floaterm#run")

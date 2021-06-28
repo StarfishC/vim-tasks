@@ -16,29 +16,28 @@ let s:devicons = {
         \   "local":    s:showDevicon ? "\uf53f" : "",
         \   "global":   s:showDevicon ? "\uf53e" : "",
         \   "comment":  s:showDevicon ? "\ufb28" : "",
+        \   "other":    s:showDevicon ? "\uf911" : "",
         \}
 
 function! s:lf_tasksystem_source(...) abort
     let taskinfo = tasksystem#params#taskinfo()
     let fileinfo = tasksystem#params#filetypetask()
     let candidates = []
-    if has_key(fileinfo, &filetype)
-        for name in fileinfo[&filetype]
-            let task = taskinfo[name . '::' . &filetype]
-            let type = s:devicons[task.type] . " " . task.type
+    let filelist = has_key(fileinfo, &filetype) ? [&filetype, "*"] : ["*"]
+    for key in filelist
+        for name in fileinfo[key]
+            if key == &filetype
+                let task = taskinfo[name . '::' . &filetype]
+                let name = s:devicons.local . " " . name
+            else
+                let task = taskinfo[name]
+                let name = s:devicons.global . " " . name
+            endif
+            let type = (has_key(s:devicons, task.type) ? s:devicons[task.type] : s:devicons.other) . " " . task.type
             let comment = s:devicons.comment . " " . task.command . ' ' . join(task.args, ' ')
-            let name = s:devicons.local . " " . name
             let line = printf("%-20s%-10s\t%s", name, type, comment)
             call add(candidates, line)
         endfor
-    endif
-    for name in fileinfo['*']
-        let task = taskinfo[name]
-        let type = s:devicons[task.type] . " " . task.type
-        let comment = s:devicons.comment . " " . task.command . ' ' . join(task.args, ' ')
-        let name = s:devicons.global . " " . name
-        let line = printf("%-20s%-10s\t%s", name, type, comment)
-        call add(candidates, line)
     endfor
     return candidates
 endfunction
@@ -59,7 +58,7 @@ function! tasksystem#extensions#leaderf#init() abort
             \ 'accept': string(function('s:lf_tasksystem_accpet'))[10: -3],
             \ 'highlights_def': {
             \       'Lf_hl_funcScope': '\(\%uf53f\|\%uf53e\).\{16}',
-            \       'Lf_hl_funcReturnType': '\(\%ue7c5\|\%ue795\|%uf489\)\_s\+\S\+',
+            \       'Lf_hl_funcReturnType': '\(\%ue7c5\|\%ue795\|\%uf489\|\%uf911\)\_s\+\S\+',
             \       'Lf_hl_funcName': '\%ufb28.*$'
             \ }
         \ }

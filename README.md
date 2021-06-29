@@ -16,6 +16,10 @@ An asynchronous task system like vscode on **(Neo)Vim**
 - [x] support [vim-floaterm][2]
 - [x] list in [LeaderF][3]
 
+## Wiki
+
+You can visit [wiki][8] for details.
+
 ## Instruction
 
 Vscode uses a `.vscode/tasks.json` file to define project specific tasks. Similar, Tasksystem uses a `.tasks.json` file in your project folders for local tasks and uses `~/.vim/tasks.json` for `vim`( or `'~/.config/nvim/tasks.json'` for `neovim`) to define global tasks for generic projects.
@@ -31,235 +35,90 @@ Plug 'voldikss/vim-floaterm'
 
 in your `.vimrc` or `init.vim`, then restart (neo)vim and run **`:PlugInstall`**
 
-## Commands
+## Usage
 
-### Start command
+### Commands
+
+Start a task called taskname:
 
 ```vim
 :Tasksystem[!] taskname
 ```
 
-## Vim configuration
+### Tasks
 
-```vim
-" Configure your global task file directory
-" Default: '~/.vim' for vim and '~/.config/nvim' for nvim
-g:tasksystem_globalPath
+Maybe you need to visit the [Task configuration][11] so that you can configure your tasks.
 
-" Markers used to detect the project root directory
-" Default: ['.project', '.root', '.git', '.hg', '.svn']
-g:tasksystem_rootMarkers
+Example: 
 
-" Global task json file name
-" Default: 'tasks.json'
-g:tasksystem_globalTasksName
+- run your python file using vim-floaterm
 
-" Local task json file name
-" Default: '.tasks.json'
-g:tasksystem_localTasksName
-```
+  ```jsonc
+  {
+    "tasks": [
+      {
+        "label": "test-run",
+        "type": "floaterm",
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "command": "python3",
+        "args": ["${file}"]
+      }
+    ]
+  }  
+  ```
 
-## Task configuration
+  Run **`:Tasksystem test-run`**, it will execute `python3 ${file}`, `${file}` and `${workspaceFolder}` are predefinedvars.
+  
+- If you want to run single `CPP` file with taskname "test-run", you need to set `filetype` option
 
-### Predefinedvars
+  ```
+  {
+    "tasks": [
+      {
+        "label": "test-run",
+        "type": "floaterm",
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "filetype": {
+          "python": {
+            "command": "python3",
+            "args": ["${file}"]
+          },
+          "cpp": {
+            "command": "clang++",
+            "args": [
+              "${file}",
+              "-std=c++11",
+              "-o",
+              "${fileWorkspaceFolder}${pathSeparator}a.out"
+            ],
+            "dependsOn": ["execute"],
+            "dependsType": "postLaunch",
+            "dependsOrder": "sequent"
+          }
+        }
+      },
+      {
+        "label": "execute",
+        "command": "time",
+        "args": ["${fileWorkspaceFolder}${pathSeparator}a.out"]
+      }
+    ]
+  }
+  ```
 
-Predefinedvars like vscode
-
-| Name | Description |
-| ---- | ----------- |
-| **${workspaceFolder}** |  the path of the folder opened in (Neo)Vim|
-| **${workspaceFolderBasename}**| the name of the folder opened in (Neo)Vim without any slashes (/) |
-| **${file}** | the current opened file |
-| **${fileWorkspaceFolder}** | the current opened file's workspace folder |
-| **${relativeFile}** | the current opened file relative to workspaceFolder |
-| **${relativeFileDirname}** | the current opened file's dirname relative to workspaceFolder |
-| **${fileBasename}** | the current opened file's basename |
-| **${fileBasenameNoExtension}** | the current opened file's basename with no file extension |
-| **${fileDirname}** | the current opened file's dirname |
-| **${fileExtname}** | the current opened file's extension |
-| **${lineNumber}** | the current selected line number in the active file |
-| **${cword}** | the word under the cursor |
-| ${selectedText} (can't support now)| the current selected text in the active file |
-| ${cwd} (can't support now)| the task runner's current working directory on startup |
-| **${input=xxx}** | If you want to input something in vim, xxx is input tips|
-
-### Options
-
-> **Tasksystem** can support mostly vscode's options for `tasks.json`, you can learn more through [Vscode's tasks][5] and [Schema for tasks.json][6]
-Schema for Tasksystem's tasks.json:
-
-```jsonc
-interface TaskConfiguration extends BaseTaskConfiguration {
-  /**
-   * The configuration's version number
-   * can be ommitted
-   */
-  version: '1.0.0';
-}
-
-interface BaseTaskConfiguration {
-  /**
-   * The type of a custom task. Tasks of type "shell" are executed
-   * Defaults to 'floaterm'
-   * Valid options: ['floaterm', 'terminal', 'ex']
-   * - 'floaterm': execute your task in $shell using vim-floaterm
-   * - 'terminal': execute your task in $shell using vim's terminal (can't be available now)
-   * - 'Ex': execute your task in vim's cmdline (ex mode)
-   */
-  type: string;
-
-  /**
-   * The command to be executed
-   * Defaults to ''
-   */
-  command: string;
-
-  /**
-   * The arguments passed to the command
-   * Defaults to []
-   */
-  args?: string[];
-
-  /**
-   * Which buffer to write
-   * Defaults to 'none'
-   * Valid options: ['none', 'all', 'current']
-   * - 'none': not save any buffer
-   * - 'all': write all changed buffers
-   * - 'current': only write current buffer
-   */
-  save?: string
-
-  /**
-   * The command options used when the command is executed
-   */
-  options?: CommandOptions;  see "interface CommandOptions" for details
-
-  /**
-   * The presentation options
-   */
-  presentation?: PresentationOptions; see "interface PresentationOptions" for details
-
-  /**
-   * The configuration of the available tasks
-   */
-  tasks?: TaskDescription[]; see "interface TaskDescription" for details
-}
-
-export interface CommandOptions {
-  /**
-   * The current working directory of the executed program or shell
-   * Defaults to "${workspaceFolder}"
-   */
-  cwd?: string;
-
-  /**
-   * Configuration of the shell when task type is 'floaterm' or 'shell'
-   */
-  shell: {
-    /**
-     * The shell to use
-     * Defaults to $shell
-     */
-    executable: string;
-
-    /**
-     * The arguments to be passed to the shell executable to run in command mode
-     * (e.g ['-c'] for bash or ['/S', '/C'] for cmd.exe)
-     */
-    args?: string[];
-   }
-}
-
-export interface PresentationOptions {
-  /**
-   * Controls whether the task output is reveal in the user interface
-   * Defaults to "always"
-   * Valid options: ["silent", "always"]
-   * - "silent": not show in the user interface
-   * - "always": always show
-   */
-  reveal?: string;
-
-  /**
-   * Controls whether the panel showing the task output is taking focus
-   * Note: can't work correctly in vim popup windows(E994)
-   * Defaults to true
-   */
-  focus?: boolean;
-
-  /**
-   * Controls how the task panel is used
-   * Defaults to "new"
-   * Valid: ["new", "shared", "dedicated"]
-   * - "new": every task execution will open a new panel
-   * - "shared": a panel shares between tasks, if the panel is not existed, a new panel will be created
-   * - "dedicated": the task panel is used for this task only
-   */
-  panel?: string;
-}
-
-export interface TaskDescription {
-  /**
-   * The task's name
-   */
-  label: string;
-
-  /**
-   * These following options correspond to the options of "interface BaseTaskConfiguration"
-   * Only works for this task if you set these options
-   */
-  type: string;
-  command: string;
-  args?: string[];
-  save?: string;
-  options?: CommandOptions;
-  presentation?: PresentationOptions;
-
-  /**
-   * Compose tasks out of simpler tasks
-   * Defaults to []
-   */
-   dependsOn?: string[];
-
-  /**
-   * Order of this task execution
-   * Defaults to "preLaunch"
-   * Valid options: ["preLaunch", "postLaunch"]
-   * - "preLaunch": the task will be executed after `dependsOn`
-   * - "postLaunch": the task will be executed before `dependsOn`
-   */
-   dependsType?: string;
-
-   /**
-    * Execute 'dependsOn' mode
-    * Defaults to 'parallel'
-    * Valid options: ["parallel", "sequent", "continuous"]
-    * - "parallel": these tasks can be executed in parallel
-    * - "sequent": these tasks can be executed in sequent
-          e.g, ["ls", "pwd"] "ls" will be executed firstly, no matter whether the task is successful or not,
-               and "pwd" will be executed secondly
-    * - "continuous": these tasks can be executed in continuous
-          e.g, ["rm xxx", "ls"] "rm xxx" will be executed firstly, if execution failed,
-               the next command "ls" will not be exectue, like "rm xxx && ls " in your shell
-    */
-    dependsOrder?: string;
-
-   /**
-    * The task only works specific filetype, works on all filetype by default
-    * You can reconfigure `task` options expect "label","filetype"
-    * e.g, {"cpp": {"command": "g++", "args": [], "python": {"command": "python3"}}
-    * See README.md 'Examples' for details
-    */
-    filetype?:{}tasks;
-}
-```
+  Run **:Tasksystem test-run**, if your file is `CPP`,it starts with `clang++`, and your file is `python`, starts with `python3`, and, of course, `args`
+  
+- If you want to know more usage,you can visit [Examples][10]
 
 ## Extensions
 
 ### [vim-floaterm][2]
 
-If you want to use floaterm's options you can put it's options to json's `options`.If you don't set floaterm's options in tasks.json, when you start a task, it's settings depend on [floaterm's options][7]
+If you want to use floaterm's options you can put it's options to json's `options`.If you don't set floaterm's options in tasks.json, when you start a task, it's settings depend on [floaterm's options][5]
 
 **Example:**
 
@@ -288,118 +147,24 @@ If you want to use floaterm's options you can put it's options to json's `option
 }
 ```
 
-**Command:**
-
-If `panel != 'shared'`, **`:Tasksystem[!] taskname`** will start by **`:FloatermNew[!]`**  
-If `panel = 'shared'` then it uses **`:FloatermNew!`** to create a terminal so that it can be reused again
-
 ### [LeaderF][3]
 
 If you want to list tasks in **LeaderF**, you need configure the following option:
 
 ```vim
-let g:tasksystem_listLeaderF = 1
+let g:tasksystem_usingLeaderF = 1
 ```
 
 Using  **`:LeaderfTask`** or **`:Leaderf --nowrap task`** to start
 
-![LeaderfScreenShot][9]
+![LeaderfScreenShot][7]
 
-## Json Examples
-
-`tasks.json`
-
-```jsonc
-{
-    "version": "1.0.0",
-    "type": "floaterm",
-    "options": {
-        "cwd": "${fileWorkspaceFolder}"
-    },
-    "presentation": {
-        "panel": "shared"
-    },
-    "tasks": [
-        {
-            "label": "quick-run",
-            "type": "floaterm",
-            "save": "current",
-            "options": {
-                "position": "bottomright",
-                "autoclose": 0
-            },
-            "presentation": {
-                "focus": 0,
-                "panel": "shared"
-            },
-            "filetype": {
-                "python": {
-                    "command": "python3",
-                    "args": ["${file}"]
-                },
-                "cpp": {
-                    "command": "clang++",
-                    "args": [
-                        "${file}",
-                        "-std=c++11",
-                        "-o",
-                        "${fileWorkspaceFolder}${pathSeparator}a.out"
-                    ],
-                    "dependsOn": ["execute"],
-                    "dependsType": "postLaunch",
-                    "dependsOrder": "sequent"
-                },
-                "vim": {
-                    "command": "so ${file}",
-                    "type": "vim"
-                },
-                "markdown": {
-                    "command": "MarkdownPreviewToggle",
-                    "type": "vim"
-                }
-            }
-        },
-        {
-            "label": "execute",
-            "command": "time",
-            "args": [
-                "${fileWorkspaceFolder}${pathSeparator}a.out"
-            ]
-        },
-        {
-            "label": "project-build",
-            "command": "rm build -r;mkdir build && cd build && cmake",
-            "args": [
-                "-DECMAKE_EXPORT_COMPILE_COMMANDS=1",
-                ".."
-            ]
-        },
-        {
-            "label": "project-cmake",
-            "command": "cmake",
-            "args": [
-                "--build",
-                "build"
-            ]
-        },
-        {
-            "label": "project-run",
-            "command": "build${pathSeparator}${workspaceFolderBasename}"
-        },
-        {
-            "label": "project",
-            "dependsOrder": "sequent",
-            "dependsOn": ["project-build", "project-cmake", "project-run"]
-        }
-    ]
-}
-```
 
 ## Reference
 
-[skywind3000/asynctasks.vim][8]
-
-[voldikss/vim-floaterm][2]
+[skywind3000/asynctasks.vim][6]  
+[voldikss/vim-floaterm][2]  
+[Yggdroot/LeaderF][3]
 
 ## License
 
@@ -409,9 +174,10 @@ MIT
 [2]: https://github.com/voldikss/vim-floaterm
 [3]: https://github.com/Yggdroot/LeaderF
 [4]: https://github.com/junegunn/vim-plug
-[5]: https://code.visualstudio.com/docs/editor/tasks
-[6]: https://code.visualstudio.com/docs/editor/tasks-appendix
-[7]: https://github.com/voldikss/vim-floaterm#options
-[8]: https://github.com/skywind3000/asynctasks.vim
-[9]: https://user-images.githubusercontent.com/49725192/123509429-0dd75e00-d6a8-11eb-82cb-ba7cfbf90212.png
+[5]: https://github.com/voldikss/vim-floaterm#options
+[6]: https://github.com/skywind3000/asynctasks.vim
+[7]: https://user-images.githubusercontent.com/49725192/123509429-0dd75e00-d6a8-11eb-82cb-ba7cfbf90212.png
+[8]: https://github.com/caoshenghui/tasksystem/wiki
+[9]: https://github.com/caoshenghui/tasksystem/wiki/Task-configuration
+[10]: https://github.com/caoshenghui/tasksystem/wiki/Task-configuration#Examples
 

@@ -110,7 +110,7 @@ Example:
   }
   ```
 
-  Run **:Tasksystem test-run**, if your file is `CPP`,it starts with `clang++`, and your file is `python`, starts with `python3`, and, of course, `args`
+  When running **:Tasksystem test-run**, the task will start with `clang++` in `CPP` file, and with `python3` in `python` file, of course, both starting with `args`.
   
 - If you want to know more usage,you can visit [Examples][10]
 

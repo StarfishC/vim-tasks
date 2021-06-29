@@ -81,7 +81,7 @@ g:tasksystem_localTasksName             *g:tasksystem_localTasksName*
     Local task json file name
     Default: '.tasks.json'
 
-g:tasksystem_listLeaderF                *g:tasksystem_listLeaderF*
+g:tasksystem_usingLeaderF               *g:tasksystem_listLeaderF*
 
     Whether to list tasks in LeaderF
     Default: 0
@@ -129,7 +129,10 @@ BaseTaskConfiguration:
 
     The type of a custom task. Tasks of type "shell" are executed
     Default: 'floaterm'
-    Valid options: ['floaterm']
+    Valid options: ['floaterm', 'ex', 'terminal']
+        - 'floaterm': run task using vim-floaterm
+        - 'ex': run task using vim's ex-mode
+        - 'terminal': run task using vim's terminal
 
 "command": Type |string|                *tasksystem-task-options-command*
 

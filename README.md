@@ -47,7 +47,7 @@ Start a task called taskname:
 
 ### Tasks
 
-Maybe you need to visit the [Task configuration][11] so that you can configure your tasks.
+Maybe you need to visit the [Task configuration][9] so that you can configure your tasks.
 
 Example: 
 

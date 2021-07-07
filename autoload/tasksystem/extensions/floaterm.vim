@@ -44,6 +44,25 @@ function! s:floaterm_params(opts) abort
     return params
 endfunction
 
+function s:floaterm_focus() abort
+    if !has("nvim") | return | endif
+    stopinsert | noa wincmd p
+    augroup close-floaterm-runner
+        autocmd!
+        autocmd CursorMoved,InsertEnter * ++nested call timer_start(100, { -> s:floaterm_close() })
+    augroup end
+endfunction
+
+function! s:floaterm_close() abort
+    if &ft == 'floaterm' | return | endif
+    for b in tabpagebuflist()
+        if getbufvar(b, '&ft') == 'floaterm' && getbufvar(b, 'floaterm_jobexists') == v:false
+            execute b 'bwipeout!'
+            break
+        endif
+    endfor
+endfunction
+
 function! s:floaterm_run_new(bang, opts) abort
     if a:bang
         let cmd = 'FloatermNew!'
@@ -63,25 +82,6 @@ function! s:floaterm_run_new(bang, opts) abort
     if get(a:opts.presentation, 'focus', 1) == 0
         call s:floaterm_focus()
     endif
-endfunction
-
-function s:floaterm_focus() abort
-    if !has("nvim") | return | endif
-    stopinsert | noa wincmd p
-    augroup close-floaterm-runner
-        autocmd!
-        autocmd CursorMoved,InsertEnter * ++nested call timer_start(100, { -> s:floaterm_close() })
-    augroup end
-endfunction
-
-function! s:floaterm_close() abort
-    if &ft == 'floaterm' | return | endif
-    for b in tabpagebuflist()
-        if getbufvar(b, '&ft') == 'floaterm' && getbufvar(b, 'floaterm_jobexists') == v:false
-            execute b 'bwipeout!'
-            break
-        endif
-    endfor
 endfunction
 
 function! s:floaterm_run_op(bang, opts, panel) abort

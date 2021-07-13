@@ -32,5 +32,5 @@ let g:tasksystem_extensionsRunner   = get(g:, 'tasksystem_extensionsRunner', {})
 
 call tasksystem#extensions#init()
 
-command! -bang -nargs=+ -range=0 -complete=customlist,tasksystem#complete Tasksystem call tasksystem#run(<bang>0, <q-args>)
+command! -bang -nargs=+ -range=0 -complete=customlist,tasksystem#complete TaskRun call tasksystem#run(<bang>0, <q-args>)
 

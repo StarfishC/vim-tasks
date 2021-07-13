@@ -19,6 +19,8 @@ function! s:start_task(bang, params)
             let cmdline .= ' ' . arg
         endfor
         exec cmdline
+    elseif a:params.type == 'terminal'
+        call tasksystem#terminal#run(a:bang, a:params)
     elseif has_key(g:tasksystem_extensionsRunner, a:params.type)
         call g:tasksystem_extensionsRunner[a:params.type](a:bang, a:params)
     endif

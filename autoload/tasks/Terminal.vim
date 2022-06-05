@@ -36,7 +36,7 @@ function! s:terminal_options(opts) abort
 
     let options.term_name   = get(a:opts.options, 'title', a:opts.label)
     let options.term_rows   = get(a:opts.options, 'height', winheight('')/2)
-    let options.term_cols   = get(a:opts.options, 'width', winwidth('')/2)
+    let options.term_cols   = get(a:opts.options, 'width', winwidth(''))
     let options.term_kill   = "kill"
     let options.term_finish = "open"
     let options.eof_chars   = ""
@@ -44,6 +44,8 @@ function! s:terminal_options(opts) abort
 
     if has_key(a:opts.options, 'position')
         if a:opts.options.position == 'vsplit'
+            let options.term_rows= get(a:opts.options, 'height', winheight(''))
+            let options.term_cols= get(a:opts.options, 'width', winwidth('')/2)
             let options.vertical = 1
             let options.curwin   = 0
         endif
@@ -65,13 +67,23 @@ endfunction
 function! s:terminal_run2(opts) abort
     let shell = a:opts.options.shell.executable
     let options = s:terminal_options(a:opts)
-    let buf = term_start("zsh", options)
+    let id = win_getid()
+    if bufexists(expand(options.term_name))
+        let buf = bufnr(options.term_name)
+        if index(term_list(), buf) == -1
+            let buf = term_start(shell, options)
+        endif
+    else
+        let buf = term_start(shell, options)
+    endif
     let cmdline = a:opts.command
     for arg in a:opts.args
         let cmdline .= " " . arg
     endfor
-    let cmdline .= "\n"
     let job = term_getjob(buf)
+    if a:opts.presentation.focus == 0
+        call win_getid(id)
+    endif
     call ch_sendraw(job, cmdline)
 endfunction
 

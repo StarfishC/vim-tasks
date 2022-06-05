@@ -79,7 +79,7 @@ export def ReplaceMacros(task: dict<any>): dict<any>
         data.args[i] = Process_vars(data.args[i])
     endfor
     for key in keys(data.options)
-        if type(data.options[key]) != v:t_string | continue | endif 
+        if type(data.options[key]) != v:t_string | continue | endif
         data.options[key] = Process_vars(data.options[key])
     endfor
     return data

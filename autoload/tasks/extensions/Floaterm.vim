@@ -96,7 +96,7 @@ def Floaterm_run_new(bang: bool, opts: dict<any>): void
     endfor
     cmd ..= ' ' .. cmdline
     execute cmd
-    if get(opts.presentation, 'focus', 1) == 0
+    if get(opts.presentation, 'focus', v:false) == v:true
         Floaterm_focus()
     endif
 enddef
@@ -128,7 +128,7 @@ def Floaterm_run_op(bang: bool, opts: dict<any>, panel: string): void
     if &filetype == 'floaterm' && g:floaterm_autoinsert
         call floaterm#util#startinsert()
     endif
-    if get(opts.presentation, 'focus', 1) == 0
+    if get(opts.presentation, 'focus', v:false) == v:true
         Floaterm_focus()
     endif
 enddef

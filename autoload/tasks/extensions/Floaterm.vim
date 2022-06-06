@@ -9,12 +9,12 @@ vim9script
 # LICENSE:        MIT
 # ============================================================================
 
-import "../Utils.vim"
+import autoload "../Utils.vim"
 
 export def Run(bang: bool, opts: dict<any>): void
     if !exists(':FloatermNew')
         Utils.ErrorMsg("require voldikss/vim-floaterm")
-        return
+        return void
     endif
     var shell = g:floaterm_shell
     g:floaterm_shell = opts.options.shell.executable

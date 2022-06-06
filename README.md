@@ -1,10 +1,10 @@
-# Tasksystem
+# Tasks
 
-[![GitHub license](https://img.shields.io/github/license/caoshenghui/tasksystem)](https://github.com/caoshenghui/tasksystem/blob/master/LICENSE) 
-[![Maintenance](https://img.shields.io/maintenance/yes/2021)](https://github.com/caoshenghui/tasksystem/graphs/commit-activity)
+[![GitHub license](https://img.shields.io/github/license/caoshenghui/vim-tasks)](https://github.com/caoshenghui/vim-tasks/blob/master/LICENSE) 
+[![Maintenance](https://img.shields.io/maintenance/yes/2021)](https://github.com/caoshenghui/vim-tasks/graphs/commit-activity)
 
 
-An asynchronous task system like vscode on **(Neo)Vim**
+An asynchronous task system like VSCode on **Vim** (not support neovim now)
 
 ![Sceenshot][1]
 
@@ -12,6 +12,7 @@ An asynchronous task system like vscode on **(Neo)Vim**
 
 - [ ] support terminal
 - [ ] support quickfix
+- [ ] support neovim
 - [x] support parallel/sequent/continuous tasks
 - [x] support [vim-floaterm][2]
 - [x] list in [LeaderF][3]
@@ -22,14 +23,14 @@ You can visit [wiki][8] for details.
 
 ## Instruction
 
-Vscode uses a `.vscode/tasks.json` file to define project specific tasks. Similar, Tasksystem uses a `.tasks.json` file in your project folders for local tasks and uses `~/.vim/tasks.json` for `vim`( or `'~/.config/nvim/tasks.json'` for `neovim`) to define global tasks for generic projects.
+**VSCode** uses a `.vscode/tasks.json` file to define project specific tasks. Similar, **Tasks** uses a `.tasks.json` file in your project folders for local tasks and uses `~/.vim/tasks.json` for `vim`( or `'~/.config/nvim/tasks.json'` for `neovim`) to define global tasks for generic projects.
 
 ## Installtion
 
 For [vim-plug][4]
 
 ```vim
-Plug 'caoshenghui/tasksystem'
+Plug 'caoshenghui/vim-tasks'
 Plug 'voldikss/vim-floaterm'
 ```
 
@@ -42,7 +43,7 @@ in your `.vimrc` or `init.vim`, then restart (neo)vim and run **`:PlugInstall`**
 Start a task called taskname:
 
 ```vim
-:Tasksystem[!] taskname
+:TaskRun[!] taskname
 ```
 
 ### Tasks
@@ -69,7 +70,7 @@ Example:
   }  
   ```
 
-  Run **`:Tasksystem test-run`**, it will execute `python3 ${file}`, `${file}` and `${workspaceFolder}` are predefinedvars.
+  Run **`:TaskRun test-run`**, it will execute `python3 ${file}`, `${file}` and `${workspaceFolder}` are predefinedvars.
   
 - If you want to run single `CPP` file with taskname "test-run", you need to set `filetype` option
 
@@ -110,7 +111,7 @@ Example:
   }
   ```
 
-  When running **:Tasksystem test-run**, the task will start with `clang++` in `CPP` file, and with `python3` in `python` file, of course, both starting with `args`.
+  When running **:TaskRun test-run**, the task will start with `clang++` in `CPP` file, and with `python3` in `python` file, of course, both starting with `args`.
   
 - If you want to know more usage,you can visit [Examples][10]
 
@@ -152,7 +153,7 @@ If you want to use floaterm's options you can put it's options to json's `option
 If you want to list tasks in **LeaderF**, you need configure the following option:
 
 ```vim
-let g:tasksystem_usingLeaderF = 1
+let g:Tasks_UsingLeaderF = 1
 ```
 
 Using  **`:LeaderfTask`** or **`:Leaderf --nowrap task`** to start

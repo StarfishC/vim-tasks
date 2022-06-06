@@ -2,7 +2,7 @@ vim9script
 
 # vim:sw=4
 # ============================================================================
-# File:           floaterm.vim
+# File:           Floaterm.vim
 # Author:         caoshenghui <576365750@qq.com>
 # Github:         https://github.com/caoshenghui
 # Description:    Run tasks in voldikss/vim-floaterm
@@ -14,7 +14,7 @@ import autoload "../Utils.vim"
 export def Run(bang: bool, opts: dict<any>): void
     if !exists(':FloatermNew')
         Utils.ErrorMsg("require voldikss/vim-floaterm")
-        return void
+        return
     endif
     var shell = g:floaterm_shell
     g:floaterm_shell = opts.options.shell.executable

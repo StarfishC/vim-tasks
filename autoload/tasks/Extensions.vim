@@ -2,7 +2,7 @@ vim9script
 
 # vim:sw=4
 # ============================================================================
-# File:           extensions.vim
+# File:           Extensions.vim
 # Author:         caoshenghui <576365750@qq.com>
 # Github:         https://github.com/caoshenghui
 # Description:    extensions for tasksystem

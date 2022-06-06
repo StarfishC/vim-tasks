@@ -2,7 +2,7 @@ vim9script
 
 # vim:sw=4
 # ============================================================================
-# File:           leaderf.vim
+# File:           Leaderf.vim
 # Author:         caoshenghui <576365750@qq.com>
 # Github:         https://github.com/caoshenghui
 # Description:    list in LeaderF (Yggdroot/LeaderF)
@@ -33,12 +33,12 @@ export def Init(): void
     endif
     g:Lf_Extensions = get(g:, 'Lf_Extensions', {})
     g:Lf_Extensions.task = {
-        'source': Lf_tasksystem_source,
-        'accept': Lf_tasksystem_accept,
+        'source': string(function(Lf_tasks_source))[10 : -3],
+        'accept': string(function(Lf_tasks_accept))[10 : -3],
         'highlights_def': {
-              'Lf_hl_funcScope': '\(\%uf53f\|\%uf53e\).\{16}',
-              'Lf_hl_funcReturnType': '\(\%ue7c5\|\%ue795\|\%uf489\|\%uf911\)\_s\+\S\+',
-              'Lf_hl_funcName': '\%ufb28.*$'
+              'Lf_hl_funcScope': '.*\%<21c',
+              'Lf_hl_funcReturnType': '\%>20c.*\%<36c',
+              'Lf_hl_funcName': '\%>35c.*$'
         }
     }
     if !exists(':LeaderfTask')
@@ -47,7 +47,7 @@ export def Init(): void
 enddef
 
 
-def Lf_tasksystem_source(...itemlist: list<any>): list<string>
+def Lf_tasks_source(...itemlist: list<any>): list<string>
     var taskinfo = Task.TaskInfo()
     var ftinfo   = Task.FiletypeTask()
     var filelist = has_key(ftinfo, &filetype) ? [&filetype, "*"] : ["*"]
@@ -65,15 +65,15 @@ def Lf_tasksystem_source(...itemlist: list<any>): list<string>
             endif
             var type = (has_key(devicons, info.type) ? devicons[info.type] : devicons.other) .. " " .. info.type
             var comment = devicons.comment .. " " .. info.command .. ' ' ..  join(info.args, ' ')
-            var line = printf("%-20s%-10s\t%s", name, type, comment)
+            var line = printf("%-20s%-15s%s", name, type, comment)
             call add(candidates, line)
         endfor
     endfor
     return candidates
 enddef
 
-def Lf_tasksystem_accept(line: string, ...arg: list<any>)
-    var taskname = trim(line[4 : 19], " ", 2)
+def Lf_tasks_accept(line: string, ...arg: list<any>): void
+    var taskname = trim(line[2 : 17], " ", 2)
     Tasks.Run(v:false, taskname)
 enddef
 

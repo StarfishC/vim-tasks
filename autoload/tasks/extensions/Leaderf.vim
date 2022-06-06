@@ -47,7 +47,7 @@ export def Init(): void
 enddef
 
 
-def Lf_tasksystem_source(): list<string>
+def Lf_tasksystem_source(...itemlist: list<any>): list<string>
     var taskinfo = Task.TaskInfo()
     var ftinfo   = Task.FiletypeTask()
     var filelist = has_key(ftinfo, &filetype) ? [&filetype, "*"] : ["*"]
@@ -72,7 +72,7 @@ def Lf_tasksystem_source(): list<string>
     return candidates
 enddef
 
-def Lf_tasksystem_accept(line: string, arg: string)
+def Lf_tasksystem_accept(line: string, ...arg: list<any>)
     var taskname = trim(line[4 : 19], " ", 2)
     Tasks.Run(v:false, taskname)
 enddef

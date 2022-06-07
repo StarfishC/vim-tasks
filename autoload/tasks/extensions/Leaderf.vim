@@ -74,6 +74,6 @@ enddef
 
 def Lf_tasks_accept(line: string, ...arg: list<any>): void
     var taskname = trim(line[2 : 17], " ", 2)
-    Tasks.Run(v:false, taskname)
+    Tasks.Run(false, taskname)
 enddef
 

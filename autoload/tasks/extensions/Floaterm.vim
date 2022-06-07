@@ -21,9 +21,9 @@ export def Run(bang: bool, opts: dict<any>): void
     if opts.presentation.panel == 'new'
         Ft_tasks_run_new(bang, opts)
     elseif opts.presentation.panel == 'shared'
-        Ft_tasks_run_op(v:true, opts, 'shared')
+        Ft_tasks_run_op(true, opts, 'shared')
     else
-        Ft_tasks_run_op(v:true, opts, 'dedicated')
+        Ft_tasks_run_op(true, opts, 'dedicated')
     endif
     g:floaterm_shell = shell
 enddef
@@ -77,7 +77,7 @@ enddef
 def Ft_tasks_close(): void
     if &ft == 'floaterm' | return | endif
     for b in tabpagebuflist()
-        if getbufvar(b, '&ft') == 'floaterm' && getbufvar(b, 'floaterm_jobexists') == v:false
+        if getbufvar(b, '&ft') == 'floaterm' && getbufvar(b, 'floaterm_jobexists') == false
             execute b 'bwipeout!'
             break
         endif
@@ -96,7 +96,7 @@ def Ft_tasks_run_new(bang: bool, opts: dict<any>): void
     endfor
     cmd ..= ' ' .. cmdline
     execute cmd
-    if get(opts.presentation, 'focus', v:false) == v:true
+    if get(opts.presentation, 'focus', false)
         Ft_tasks_focus()
     endif
 enddef
@@ -128,7 +128,7 @@ def Ft_tasks_run_op(bang: bool, opts: dict<any>, panel: string): void
     if &filetype == 'floaterm' && g:floaterm_autoinsert
         call floaterm#util#startinsert()
     endif
-    if get(opts.presentation, 'focus', v:false) == v:true
+    if get(opts.presentation, 'focus', false)
         Ft_tasks_focus()
     endif
 enddef

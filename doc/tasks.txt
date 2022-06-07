@@ -1,7 +1,7 @@
 *vim-tasks.txt*           An asynchronous task system like VSCode on (Neo)Vim
 *tasks*
 ==============================================================================
-File:           params.vim
+File:           tasks.vim
 Author:         caoshenghui <576365750@qq.com>
 Github:         https://github.com/caoshenghui
 Description:

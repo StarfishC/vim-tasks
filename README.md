@@ -4,7 +4,8 @@
 [![Maintenance](https://img.shields.io/maintenance/yes/2021)](https://github.com/caoshenghui/vim-tasks/graphs/commit-activity)
 
 
-An asynchronous task system like VSCode on **Vim** (not support neovim now)
+An asynchronous task system like VSCode on **Vim** (not support neovim now)  
+This script written by vim9, make sure vim >= 8.2.5604
 
 ![Sceenshot][1]
 

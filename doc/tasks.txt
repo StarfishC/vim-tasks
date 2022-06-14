@@ -1,39 +1,39 @@
-*tasksystem.txt*           An asynchronous task system like vscode on (Neo)Vim
-*tasksystem*
+*vim-tasks.txt*           An asynchronous task system like VSCode on (Neo)Vim
+*tasks*
 ==============================================================================
-File:           params.vim
+File:           tasks.vim
 Author:         caoshenghui <576365750@qq.com>
 Github:         https://github.com/caoshenghui
 Description:
 LICENSE:        MIT
 ==============================================================================
 
-CONTENTS                                *tasksystem-contents*
+CONTENTS                                *tasks-contents*
 
-Introduction                            |tasksystem-introduction|
-Features                                |tasksystem-features|
-Installation                            |tasksystem-installation|
-Commands                                |tasksystem-commands|
-Vim configuration                       |tasksystem-vim-configuration|
-Task configuration                      |tasksystem-task-configuration|
-    PredefinedVars                            |tasksystem-task-predefinedvars|
-    Options                                   |tasksystem-task-options|
-Extensions                              |tasksystem-extensions|
-    vim-floaterm                              |tasksystem-extensions-floaterm|
-    LeaderF                                   |tasksystem-extensions-LeaderF|
+Introduction                            |tasks-introduction|
+Features                                |tasks-features|
+Installation                            |tasks-installation|
+Commands                                |tasks-commands|
+Vim configuration                       |tasks-vim-configuration|
+Task configuration                      |tasks-task-configuration|
+    PredefinedVars                            |tasks-task-predefinedvars|
+    Options                                   |tasks-task-options|
+Extensions                              |tasks-extensions|
+    vim-floaterm                              |tasks-extensions-floaterm|
+    LeaderF                                   |tasks-extensions-LeaderF|
 
 ==============================================================================
-INTRODUCTION                            *tasksystem-introduction*
+INTRODUCTION                            *tasks-introduction*
 
-Tasksystem is an asynchronous task system like vscode on (Neo)Vim
+Tasks is an asynchronous task system like vscode on (Neo)Vim
 
-Vscode uses a .vscode/tasks.json file to define project specific tasks.
-Similar, Tasksystem uses a .tasks.json file in your project folders for local
+VSCode uses a .vscode/tasks.json file to define project specific tasks.
+Similar, Tasks uses a .tasks.json file in your project folders for local
 tasks and uses ~/.vim/tasks.json for vim( or '~/.config/nvim/tasks.json' for
 neovim) to define global tasks for generic projects
 
 ==============================================================================
-FEATURES                                *tasksystem-features*
+FEATURES                                *tasks-features*
 
 x support terminal
 x support quickfix
@@ -42,55 +42,55 @@ x support quickfix
 - list tasks in LeaderF
 
 ==============================================================================
-INSTALLATION                            *tasksystem-installation*
+INSTALLATION                            *tasks-installation*
 
 For vim-plug:
 >
-    Plug 'caoshenghui/tasksystem'
+    Plug 'caoshenghui/vim-tasks'
     Plug 'voldikss/vim-floaterm'
 <
 in your .vimrc  or init.vim, then restart (Neo)Vim and run :PlugInstall
 
 ==============================================================================
-COMMANDS                                *tasksystem-commands*
+COMMANDS                                *tasks-commands*
 
-:Tasksystem[!] taskname                 *:Tasksystem*
+:TaskRun[!] taskname                    *:Tasks*
 
     Run a task called taskname
 
 ==============================================================================
-VIM CONFIGURATION                       *tasksystem-vim-configuration*
+VIM CONFIGURATION                       *tasks-vim-configuration*
 
-g:tasksystem_globalPath                 *g:tasksystem_globalPath*
+g:Tasks_GlobalPath                      *g:Tasks_GlobalPath*
 
     Configure your global task file directory
     Default: '~/.vim' for vim or '~/.config/nvim' for nvim
 
-g:tasksystem_rootMarkers                *g:tasksystem_rootMarkers*
+g:Tasks_RootMarkers                     *g:Tasks_RootMarkers*
 
     Markers used to detect the project root directory
     Default: ['.project', '.root', '.git', '.hg', '.svn']
 
-g:tasksystem_globalTasksName            *g:tasksystem_globalTasksName*
+g:Tasks_GlobalTasksName                 *g:Tasks_GlobalTasksName*
 
     Global task json file name
     Default: 'tasks.json'
 
-g:tasksystem_localTasksName             *g:tasksystem_localTasksName*
+g:Tasks_LocalTasksName                  *g:Tasks_LocalTasksName*
 
     Local task json file name
     Default: '.tasks.json'
 
-g:tasksystem_usingLeaderF               *g:tasksystem_listLeaderF*
+g:Tasks_UsingLeaderF                    *g:Tasks_UsingLeaderF*
 
     Whether to list tasks in LeaderF
     Default: 0
 
 ==============================================================================
-Task CONFIGURATION                      *tasksystem-task-configuration*
+Task CONFIGURATION                      *tasks-task-configuration*
 
 ------------------------------------------------------------------------------
-PREDEFINEDVARS                          *tasksystem-task-predefinedvars*
+PREDEFINEDVARS                          *tasks-task-predefinedvars*
 
 PredefinedVars like vscode
 
@@ -116,16 +116,16 @@ ${pathSeparator}           :the character used by the operating system to
 ${input=xxx}               :you can input something in vim
 
 ------------------------------------------------------------------------------
-OPTIONS                                 *tasksystem-task-options*
+OPTIONS                                 *tasks-task-options*
 
 BaseTaskConfiguration:
 
-"version": Type |string|                *tasksystem-task-options-version*
+"version": Type |string|                *tasks-task-options-version*
 
     The configuration's version number, can be ommited
     Default: '1.0.0'
 
-"type": Type |string|                   *tasksystem-task-options-type*
+"type": Type |string|                   *tasks-task-options-type*
 
     The type of a custom task. Tasks of type "shell" are executed
     Default: 'floaterm'
@@ -134,17 +134,17 @@ BaseTaskConfiguration:
         - 'ex': run task using vim's ex-mode
         - 'terminal': run task using vim's terminal
 
-"command": Type |string|                *tasksystem-task-options-command*
+"command": Type |string|                *tasks-task-options-command*
 
     The command to be executed
     Default: ''
 
-"args": Type |list-string|              *tasksystem-task-options-args*
+"args": Type |list-string|              *tasks-task-options-args*
 
     The arguments passed to the command
     Default: []
 
-"save": Type |string|                   *tasksystem-task-options-save*
+"save": Type |string|                   *tasks-task-options-save*
 
     Which buffer to write
     Default: 'none'
@@ -153,7 +153,7 @@ BaseTaskConfiguration:
         - 'all': write all changed buffers
         - 'current': only write current buffer
 
-"options": Type |dict|                  *tasksystem-task-options-options*
+"options": Type |dict|                  *tasks-task-options-options*
 
     The command options used when the command is executed
 
@@ -161,7 +161,7 @@ BaseTaskConfiguration:
         The current working directory of the executed program or shell
         Default: "${workspaceFolder}"
 
-"presentation": Type |dict|             *tasksystem-task-options-presentation*
+"presentation": Type |dict|             *tasks-task-options-presentation*
 
     'reveal': Type |string|
         Controls whether the task output is reveal in the user interface
@@ -184,7 +184,7 @@ BaseTaskConfiguration:
                         existed, a new panel will be created
             - "dedicated": the task panel is used for this task only
 
-"tasks": Type |list-dict|               *tasksystem-task-options-tasks*
+"tasks": Type |list-dict|               *tasks-task-options-tasks*
 
     The configuration of the available tasks
 
@@ -228,12 +228,12 @@ BaseTaskConfiguration:
         See README.md 'Examples' for details
 
 ==============================================================================
-EXTENSIONS                              *tasksystem-extensions*
+EXTENSIONS                              *tasks-extensions*
 
 The extensions for Tasksystem
 
 ------------------------------------------------------------------------------
-vim-floaterm                            *tasksystem-extensions-floaterm*
+vim-floaterm                            *tasks-extensions-floaterm*
 
 If you want to use floaterm's options you can put it's options to json's
 `options`.If you don't set floaterm's options in tasks.json, when you start
@@ -243,12 +243,12 @@ a task, it's settings depend on
 You need see README.md to learn more
 
 ------------------------------------------------------------------------------
-LeaderF                                 *tasksystem-extensions-LeaderF*
+LeaderF                                 *tasks-extensions-LeaderF*
 
 If you want to list tasks in |LeaderF|:
 
 >
-    let g:tasksystem_listLeaderF = 1
+    g:Tasks_UsingLeaderF = 1
 <
 
 Using |:LeaderfTask| or |:Leaderf --nowrap task| to start

@@ -4,7 +4,8 @@
 [![Maintenance](https://img.shields.io/maintenance/yes/2021)](https://github.com/caoshenghui/vim-tasks/graphs/commit-activity)
 
 
-An asynchronous task system like VSCode on **Vim** (not support neovim now)
+An asynchronous task system like VSCode on **Vim** (not support neovim now)  
+This script written by vim9, make sure vim >= 8.2.5604
 
 ![Sceenshot][1]
 
@@ -153,7 +154,7 @@ If you want to use floaterm's options you can put it's options to json's `option
 If you want to list tasks in **LeaderF**, you need configure the following option:
 
 ```vim
-let g:Tasks_UsingLeaderF = 1
+g:Tasks_UsingLeaderF = 1
 ```
 
 Using  **`:LeaderfTask`** or **`:Leaderf --nowrap task`** to start
@@ -178,7 +179,7 @@ MIT
 [5]: https://github.com/voldikss/vim-floaterm#options
 [6]: https://github.com/skywind3000/asynctasks.vim
 [7]: https://user-images.githubusercontent.com/49725192/123509429-0dd75e00-d6a8-11eb-82cb-ba7cfbf90212.png
-[8]: https://github.com/caoshenghui/tasksystem/wiki
-[9]: https://github.com/caoshenghui/tasksystem/wiki/Task-configuration
-[10]: https://github.com/caoshenghui/tasksystem/wiki/Task-configuration#Examples
+[8]: https://github.com/caoshenghui/vim-tasks/wiki
+[9]: https://github.com/caoshenghui/vim-tasks/wiki/Task-configuration
+[10]: https://github.com/caoshenghui/vim-tasks/wiki/Task-configuration#Examples
 

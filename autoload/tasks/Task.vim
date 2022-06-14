@@ -48,14 +48,14 @@ export def TaskInfo(): dict<any>
         'global': expand(default_global_path) .. symbol ..  global_json_name,
         'local':  expand(default_local_path) .. symbol .. local_json_name
     }
-    var flag = v:false
+    var flag = false
     for file in keys(files)
         var lasttime = getftime(files[file])
         if file_modify_time[file] == 0
             file_modify_time[file] = lasttime
             Process_params(file, Json_decode(files[file]))
         elseif lasttime != -1 && lasttime > file_modify_time[file]
-            flag = v:true
+            flag = true
             break
         endif
     endfor
@@ -151,8 +151,8 @@ def Scheme_params(opts: dict<any>, rep: dict<any>): dict<any>
     params.args                = get(opts, "args", get(rep, "args", []))
     params.presentation        = get(opts, "presentation", get(rep, "presentation", {}))
     params.presentation.reveal = get(params.presentation, "reveal", "always")
-    params.presentation.echo   = get(params.presentation, "echo", v:false)
-    params.presentation.focus  = get(params.presentation, "focus", v:true)
+    params.presentation.echo   = get(params.presentation, "echo", false)
+    params.presentation.focus  = get(params.presentation, "focus", true)
     params.presentation.panel  = get(params.presentation, "panel", "new")
 
     if rep == {}
@@ -177,7 +177,7 @@ def Process_vars(str: string): string
     var keypattern   = '[a-zA-Z]\+'
     var inputpattern = '\${input=\(.\{-}\)}'
     var tmp = str
-    while v:true
+    while true
         var substr = matchstr(tmp, subpattern)
         var keystr = matchstr(substr, keypattern)
         if has_key(macros, keystr)

@@ -19,17 +19,17 @@ export def Run(bang: bool, opts: dict<any>): void
     var shell = g:floaterm_shell
     g:floaterm_shell = opts.options.shell.executable
     if opts.presentation.panel == 'new'
-        Floaterm_run_new(bang, opts)
+        Ft_tasks_run_new(bang, opts)
     elseif opts.presentation.panel == 'shared'
-        Floaterm_run_op(v:true, opts, 'shared')
+        Ft_tasks_run_op(true, opts, 'shared')
     else
-        Floaterm_run_op(v:true, opts, 'dedicated')
+        Ft_tasks_run_op(true, opts, 'dedicated')
     endif
     g:floaterm_shell = shell
 enddef
 
 
-def Floaterm_params(opts: dict<any>): dict<any>
+def Ft_tasks_params(opts: dict<any>): dict<any>
     var params = {}
     params.cwd = fnameescape(opts.options.cwd)
     params.name = fnameescape(get(opts.options, 'name', '') != '' ?  opts.options.name : opts.label)
@@ -65,7 +65,7 @@ def Floaterm_params(opts: dict<any>): dict<any>
     return params
 enddef
 
-def Floaterm_focus(): void
+def Ft_tasks_focus(): void
     if !has("nvim") | return | endif
     stopinsert | noa wincmd p
     augroup close-floaterm-runner
@@ -74,19 +74,19 @@ def Floaterm_focus(): void
     augroup end
 enddef
 
-def Floaterm_close(): void
+def Ft_tasks_close(): void
     if &ft == 'floaterm' | return | endif
     for b in tabpagebuflist()
-        if getbufvar(b, '&ft') == 'floaterm' && getbufvar(b, 'floaterm_jobexists') == v:false
+        if getbufvar(b, '&ft') == 'floaterm' && getbufvar(b, 'floaterm_jobexists') == false
             execute b 'bwipeout!'
             break
         endif
     endfor
 enddef
 
-def Floaterm_run_new(bang: bool, opts: dict<any>): void
+def Ft_tasks_run_new(bang: bool, opts: dict<any>): void
     var cmd = bang ? "FloatermNew!" : "FloatermNew"
-    var params = Floaterm_params(opts)
+    var params = Ft_tasks_params(opts)
     for key in keys(params)
         cmd ..= ' --' .. key .. '=' .. (type(params[key]) == v:t_float ?  string(params[key]) : params[key])
     endfor
@@ -96,13 +96,13 @@ def Floaterm_run_new(bang: bool, opts: dict<any>): void
     endfor
     cmd ..= ' ' .. cmdline
     execute cmd
-    if get(opts.presentation, 'focus', v:false) == v:true
-        Floaterm_focus()
+    if get(opts.presentation, 'focus', false)
+        Ft_tasks_focus()
     endif
 enddef
 
-def Floaterm_run_op(bang: bool, opts: dict<any>, panel: string): void
-    var params = Floaterm_params(opts)
+def Ft_tasks_run_op(bang: bool, opts: dict<any>, panel: string): void
+    var params = Ft_tasks_params(opts)
     var curr_bufnr = -1
     if panel == 'dedicated'
         curr_bufnr = floaterm#terminal#get_bufnr(params.name)
@@ -128,8 +128,8 @@ def Floaterm_run_op(bang: bool, opts: dict<any>, panel: string): void
     if &filetype == 'floaterm' && g:floaterm_autoinsert
         call floaterm#util#startinsert()
     endif
-    if get(opts.presentation, 'focus', v:false) == v:true
-        Floaterm_focus()
+    if get(opts.presentation, 'focus', false)
+        Ft_tasks_focus()
     endif
 enddef
 

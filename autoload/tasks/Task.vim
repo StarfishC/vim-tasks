@@ -171,8 +171,8 @@ def Scheme_params(opts: dict<any>, rep: dict<any>): dict<any>
 enddef
 
 # process predefinedvars
-var macros = Expand_marcors()
 def Process_vars(str: string): string
+    var macros = Expand_marcors()
     var subpattern   = '\${[a-zA-Z]\{-}}'
     var keypattern   = '[a-zA-Z]\+'
     var inputpattern = '\${input=\(.\{-}\)}'

@@ -71,8 +71,6 @@ Example:
 
   Run **`:TaskRun test-run`**, it will execute `python3 ${file}`, `${file}` and `${workspaceFolder}` are predefinedvars.
     
-- If you want to know more usage,you can visit [Examples][10]
-
 ## Extensions
 
 ### [vim-floaterm][2]

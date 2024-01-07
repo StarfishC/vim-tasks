@@ -26,6 +26,35 @@ var devicons =
    "comment":  show_devicon ? "\ueb26" : "[c]",
 }
 
+class PreviewManager
+    public var content: dict<any>
+
+    def Add(Label: string, Command: string, Args: list<string>, DependsOn: list<string>)
+        var text_list: list<string>
+        add(text_list, "command: " .. Command)
+        if len(Args) > 0
+            this._AddSublist(text_list, "args", Args)
+        else
+            add(text_list, "args: []")
+        endif
+        this._AddSublist(text_list, "dependsOn", DependsOn)
+        this.content[Label] = text_list
+    enddef
+
+    def _AddSublist(Text: list<string>, Name: string, Item: list<string>)
+        if len(Item) > 0
+            add(Text, Name .. ":[")
+            for i in Item
+                add(Text, "    " .. i)
+            endfor
+            add(Text, "]")
+        endif
+    enddef
+
+endclass
+
+var preview_manager: PreviewManager = PreviewManager.new()
+
 export def Init(): void
     if !exists(':Leaderf')
         utils.ErrorMsg("Require Yggdroot/LeaderF")
@@ -34,18 +63,17 @@ export def Init(): void
     g:Lf_Extensions.task = {
         'source': string(function(LfTasksSource))[10 : -3],
         'accept': string(function(LfTasksAccept))[10 : -3],
+        'preview': string(function(LfTaskPreview))[10 : -3],
         'highlights_def': {
-              'Lf_hl_funcScope': '.*\%<21c',
-              'Lf_hl_funcReturnType': '\%>20c.*\%<36c',
-              'Lf_hl_funcName': '\%>35c.*$'
+              'Lf_hl_funcScope': '.*\%<31c',
+              'Lf_hl_funcReturnType': '\%>30c.*\%<50c',
+              'Lf_hl_funcName': '\%>50c.*$'
         }
     }
-    if !exists(':LeaderfTask')
-        command! -bar -nargs=* LeaderfTask Leaderf task <args>
-    endif
+    command! -bar -nargs=* LeaderfTask Leaderf task <args>
 enddef
 
-def LfTasksSource(...itemlist: list<any>): list<string>
+def LfTasksSource(...ItemList: list<any>): list<string>
     var candidate: list<string>
     var task_dict = tasks.GetTaskDict()
     var task_config: vscodetask.TaskConfiguration
@@ -55,13 +83,14 @@ def LfTasksSource(...itemlist: list<any>): list<string>
         task_config = task_manager.GetTask().GetConfiguration()
         if task_config == null | continue | endif
         for task in task_config.tasks
-            var label = devicons[key] .. " " .. task.label
+            var label = task.label
             var pos = index(candidate, label)
             if pos != -1 | label ..= '::' .. key | endif
             var type = has_key(devicons, task.type) ? devicons[task.type] : devicons.other
             type ..= " " .. task.type
-            var comment = devicons.comment .. " " .. task.command .. ' ' ..  join(task.args, ' ')
-            var line = printf("%-20s%-15s%s", label, type, comment)
+            preview_manager.Add(label, task.command, task.args, task.dependsOn)
+            label = devicons[key] .. " " .. label
+            var line = printf("%-30s%-20s", label, type)
             add(candidate, line)
         endfor
     endfor
@@ -69,7 +98,18 @@ def LfTasksSource(...itemlist: list<any>): list<string>
 enddef
 
 def LfTasksAccept(line: string, ...arg: list<any>): void
-    var taskname = trim(line[2 : 17], " ", 2)
-    tasks.Run(true, taskname)
+    var task_name = show_devicon ? trim(line[2 : 27], " ", 2) : trim(line[4 : 27], " ", 2)
+    tasks.Run(true, task_name)
+enddef
+
+def LfTaskPreview(orig_buf_nr: any, orig_cursor: any, line: any, args: any): list<any>
+    var task_name = show_devicon ? trim(line[2 : 27], " ", 2) : trim(line[4 : 27], " ", 2)
+    var bid = bufadd('')
+    bufload(bid)
+    setbufvar(bid, '&buflisted', 0)
+    setbufvar(bid, '&bufhidden', 'hide')
+    setbufline(bid, 1, preview_manager.content[task_name])
+    setbufvar(bid, '&modified', 0)
+    return [bid, 1, '']
 enddef
 

@@ -55,6 +55,9 @@ export class FloatermRunner extends runner.Runner
             add(cmd, 'cd ' .. this._task.typeOptions.cwd)
             add(cmd, this._GetCmd())
             floaterm#terminal#send(curr_bufnr, cmd)
+            if !this._task.typeOptions.silent
+                floaterm#show(Bang, curr_bufnr, '')
+            endif
         endif
         this._FocusFloaterm()
     enddef
